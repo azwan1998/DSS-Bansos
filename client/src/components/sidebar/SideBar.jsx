@@ -28,7 +28,7 @@ function SideBar() {
                     with font-awesome or any other icon font library */}
                 <li className="nav-item">
                 <a href="/" className="nav-link">
-                    <i className="nav-icon fas fa-tachometer-alt" />
+                    <i className="nav-icon fas fa-light fa-house" />
                     <p>
                     Dashboard
                     </p>
@@ -36,15 +36,15 @@ function SideBar() {
                 </li>
                 <li className="nav-item">
                 <a href="/family" className="nav-link">
-                    <i className="nav-icon fas fa-chart-pie" />
+                    <i className="nav-icon fas fa-light fa-users" />
                     <p>
-                    Data Keluarga
+                    Data Kepala Keluarga
                     </p>
                 </a>
                 </li>
                 <li className="nav-item">
                 <a href="#" className="nav-link">
-                    <i className="nav-icon fas fa-chart-pie" />
+                    <i className="nav-icon fas fa-light fa-list-check" />
                     <p>
                     Data Kriteria
                     <i className="right fas fa-angle-left" />
@@ -52,37 +52,37 @@ function SideBar() {
                 </a>
                 <ul className="nav nav-treeview">
                     <li className="nav-item">
-                    <a href="../charts/chartjs.html" className="nav-link">
-                        <i className="far fa-circle nav-icon" />
+                    <a href="/kriteria" className="nav-link">
+                        <i className="fas fa-light fa-check nav-icon" />
                         <p>Kriteria</p>
                     </a>
                     </li>
                     <li className="nav-item">
-                    <a href="../charts/flot.html" className="nav-link">
-                        <i className="far fa-circle nav-icon" />
+                    <a href="/subkriteria" className="nav-link">
+                        <i className="fas fa-light fa-check nav-icon" />
                         <p>Subkriteria</p>
                     </a>
                     </li>
                 </ul>
                 </li>
                 <li className="nav-item">
-                <a href="#" className="nav-link">
-                    <i className="nav-icon fas fa-chart-pie" />
+                <a href="/daerah" className="nav-link">
+                    <i className="nav-icon fas fa-light fa-map-location-dot" />
                     <p>
                     Data Daerah
                     </p>
                 </a>
                 </li>
                 <li className="nav-item">
-                <a href="#" className="nav-link">
-                    <i className="nav-icon fas fa-user" />
+                <a href="/calon" className="nav-link">
+                    <i className="nav-icon fas fa-light fa-user-check" />
                     <p>
                     Calon Penerima
                     </p>
                 </a>
                 </li>
                 <li className="nav-item">
-                <a href="#" className="nav-link">
+                <a href="/logout" className="nav-link">
                     <i className="nav-icon fas fa-sign-out-alt"/>
                     <p>
                     Logout
@@ -95,7 +95,6 @@ function SideBar() {
         </div>
         {/* /.sidebar */}
         </aside>
-
     </div>
   )
 }
