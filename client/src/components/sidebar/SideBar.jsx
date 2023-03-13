@@ -1,6 +1,24 @@
-import React from 'react'
+import {React,useNavigate} from 'react'
+import axios from 'axios';
 
 function SideBar() {
+    // const history = useNavigate();
+    // const token = localStorage.getItem("token");
+    // const logoutHanlder = async () => {
+
+    //     //set axios header dengan type Authorization + Bearer token
+    //     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    //     //fetch Rest API
+    //     await axios.post('http://localhost:8000/api/auth/logout')
+    //     .then(() => {
+
+    //         //remove token from localStorage
+    //         localStorage.removeItem("token");
+
+    //         //redirect halaman login
+    //         history.push('/');
+    //     });
+    // };
   return (
     <div className='sidebarMenu'>
         {/* Main Sidebar Container */}
@@ -82,11 +100,12 @@ function SideBar() {
                 </a>
                 </li>
                 <li className="nav-item">
-                <a href="/logout" className="nav-link">
+                <a href="/logout"  className="nav-link">
                     <i className="nav-icon fas fa-sign-out-alt"/>
                     <p>
                     Logout
                     </p>
+                    {/* onClick={logoutHanlder} */}
                 </a>
                 </li>
             </ul>

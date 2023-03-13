@@ -25,6 +25,7 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post('logout', 'logout');
     Route::post('refresh', 'refresh');
     Route::get('index', 'index');
+    Route::get('me', 'me');
 });
 //KRITERIA
 Route::controller(KriteriaController::class)->prefix('kriteria')->group(function () {

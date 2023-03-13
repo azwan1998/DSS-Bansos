@@ -9,44 +9,82 @@ import Daerah from './pages/daerah/Daerah';
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import Kriteria from './pages/kriteria/Kriteria';
 import SubKriteria from './pages/subkriteria/SubKriteria';
+import Login from './pages/login/Login';
+import axios from 'axios';
+import { useState } from 'react';
+
+axios.defaults.baseURL = "http://localhost:8000/";
+axios.defaults.headers.post['Accept'] = 'application/json';
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.withCredentials = true;
 
 function App() {
+  // const [token, setToken] = useState();
+
+  // if(!token) {
+  //   return <Login setToken={setToken} />
+  // }
   return (
     <div className="Wrapper">
       <Router>
-        <>
-          <Header />
-          <SideBar />
-        </>
         <Routes>
-          <Route exact path='/'
+          <Route exact path='/login'
             element={
+                <Login />
+            }
+          />
+          <Route path='/'
+            element={
+              <>
+                <Header />
                 <Dashboard />
+                <SideBar />
+              </>
             }
           />
           <Route path='/family'
             element={
+              <>
+                <Header />
                 <Keluarga />
+                <SideBar />
+              </>
             }
           />
           <Route path='/calon'
             element={
+              <>
+                <Header />
                 <CalonPenerima />
+                <SideBar />
+              </>
             }
           />
           <Route path='/daerah'
             element={
+              <>
+                <Header />
                 <Daerah />
+                <SideBar />
+              </>
             }
           />
           <Route path='/kriteria'
             element={
+              <>
+                <Header />
                 <Kriteria />
+                <SideBar />
+              </>
             }
           />
           <Route path='/subkriteria'
             element={
+              <>
+                <Header />
                 <SubKriteria />
+                <SideBar />
+              </>
             }
           />
         </Routes>

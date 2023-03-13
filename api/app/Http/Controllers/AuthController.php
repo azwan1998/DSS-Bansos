@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
+
 class AuthController extends Controller
 {
     public function __construct()
@@ -44,6 +45,13 @@ class AuthController extends Controller
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
+
+        // if($validator->fails()){
+        //     return response()->json([
+        //         'validation_errors' => $validator->messages(),
+        //     ]);
+        // }
+        
         $credentials = $request->only('email', 'password');
  
         $token = Auth::attempt($credentials);
@@ -58,10 +66,11 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'success',
             'user' => $user,
-            'authorisation' => [
-                'token' => $token,
-                'type' => 'bearer',
-            ]
+            'token' => $token
+            // 'authorisation' => [
+            //     'token' => $token,
+            //     'type' => 'bearer',
+            // ]
         ]);
  
     }
@@ -72,6 +81,15 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'Successfully logged out',
         ]);
+    }
+
+    public function me()
+    {
+        $data = Auth::user();
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
+        ],200);
     }
 
     public function refresh()

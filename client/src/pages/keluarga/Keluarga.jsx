@@ -26,10 +26,10 @@ function Keluarga() {
             {/* Default box */}
             <div className="card">
             <div className="card-body">
-                <div className='d-flex flex-row-reseverse mb-3'>
-                    <button type='button' className='btn btn-primary'>Input Data</button>
-                    <button type='button' className='btn btn-primary'>Input Data</button>
-                    <button type='button' className='btn btn-primary'>Cetak Data</button>
+                <div className='grid gap-2 d-md-flex justify-content-md-end mb-3'>
+                  <input type='search' className='d-flex justify-content-start'/>
+                  <button type='button' className='btn btn-primary'>Input Data</button>
+                  <button type='button' className='btn btn-secondary'>Cetak Excel</button>
                 </div>
                 
                 <table id="example1" class="table table-bordered table-striped">
