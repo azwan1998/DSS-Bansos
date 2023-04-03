@@ -5,31 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 function Login() {
-  // const [loginInput,setLogin] = useState({
-  //     email : '',
-  //     password : '',
-  //     error_list: [],
-  // });
-
-  // const handleInput = (e) => {
-  //     // e.presist();
-  //     setLogin({...loginInput, [e.target.name] : e.target.value})
-  // }
-
-  // const loginSubmit = (e) =>{
-  //     e.preventDefault();
-
-  //     const data = {
-  //         email: loginInput.email,
-  //         password: loginInput.password,
-  //     }
-  //     axios.post(`api/auth/login`,data).then(res => {
-  //         if(res.data.status === 200){
-  //           <Link to={'/'} />
-  //         }else{
-  //             setLogin({...loginInput,error_list:res.data.errors })
-  //         }
-  //     });
+ 
   //define state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

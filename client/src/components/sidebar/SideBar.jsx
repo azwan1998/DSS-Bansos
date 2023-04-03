@@ -1,24 +1,25 @@
-import {React,useNavigate} from 'react'
+import {React} from 'react'
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 function SideBar() {
-    // const history = useNavigate();
-    // const token = localStorage.getItem("token");
-    // const logoutHanlder = async () => {
+    const history = useNavigate();
+    const token = localStorage.getItem("token");
 
-    //     //set axios header dengan type Authorization + Bearer token
-    //     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-    //     //fetch Rest API
-    //     await axios.post('http://localhost:8000/api/auth/logout')
-    //     .then(() => {
+    const logoutHanlder = async () => {
 
-    //         //remove token from localStorage
-    //         localStorage.removeItem("token");
+        //set axios header dengan type Authorization + Bearer token
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+        //fetch Rest API
+        await axios.post('http://localhost:8000/api/auth/logout',token)
+        .then((response) => {
+            //remove token from localStorage
+            localStorage.removeItem("token",token);
 
-    //         //redirect halaman login
-    //         history.push('/');
-    //     });
-    // };
+            //redirect halaman login
+            history('/login');
+        });
+    };
   return (
     <div className='sidebarMenu'>
         {/* Main Sidebar Container */}
@@ -100,12 +101,12 @@ function SideBar() {
                 </a>
                 </li>
                 <li className="nav-item">
-                <a href="/logout"  className="nav-link">
+                <a href="/login" onClick={logoutHanlder}  className="nav-link">
                     <i className="nav-icon fas fa-sign-out-alt"/>
                     <p>
                     Logout
                     </p>
-                    {/* onClick={logoutHanlder} */}
+                    
                 </a>
                 </li>
             </ul>

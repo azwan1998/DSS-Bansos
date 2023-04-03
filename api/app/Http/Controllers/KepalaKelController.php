@@ -19,7 +19,7 @@ class KepalaKelController extends Controller
      */
     public function index()
     {
-        $kepala = KepalaKeluarga::select('*')
+        $kepala = KepalaKeluarga::select('kepala_keluargas.*','daerahs.nama_daerah')
         ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
         ->paginate(10);
 
