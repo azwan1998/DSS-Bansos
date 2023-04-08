@@ -19,7 +19,7 @@ class SubKriteriaController extends Controller
      */
     public function index()
     {
-        $sub = SubKriteria::select('*')
+        $sub = SubKriteria::select('sub_kriterias.*','kriterias.nama_kriteria','kriterias.code')
         ->join('Kriterias','kriterias.id','=','sub_kriterias.id_kriterias')
         ->paginate(10);
 

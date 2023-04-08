@@ -19,10 +19,14 @@ class KriteriaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */ 
-    public function index()
+    public function index(Request $request)
     {
-        $kriteria = Kriteria::paginate(10);
-
+        if($request->list){
+            $kriteria = Kriteria::all();
+        }else{
+            $kriteria = Kriteria::paginate(10);
+        }
+    
         return response()->json([   
             'data' => $kriteria
         ]);

@@ -21,7 +21,7 @@ class DaerahController extends Controller
      */
     public function index()
     {
-        $daerah = Daerah::paginate(10);
+        $daerah = Daerah::all();
 
         return response()->json([
             'data' => $daerah

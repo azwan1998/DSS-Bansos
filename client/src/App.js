@@ -11,7 +11,7 @@ import Kriteria from './pages/kriteria/Kriteria';
 import SubKriteria from './pages/subkriteria/SubKriteria';
 import Login from './pages/login/Login';
 import axios from 'axios';
-import { useState } from 'react';
+// import { useState } from 'react';
 
 axios.defaults.baseURL = "http://localhost:8000/";
 axios.defaults.headers.post['Accept'] = 'application/json';
