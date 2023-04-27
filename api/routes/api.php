@@ -7,6 +7,7 @@ use App\Http\Controllers\KriteriaController;
 use App\Http\Controllers\DaerahController;
 use App\Http\Controllers\KepalaKelController;
 use App\Http\Controllers\SubKriteriaController;
+use App\Http\Controllers\CalonPenerimaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +58,12 @@ Route::controller(SubKriteriaController::class)->prefix('subkriteria')->group(fu
     Route::post('/store', 'store');
     Route::post('/update/{id}', 'update');
     Route::post('/delete/{id}', 'destroy');
+    Route::get('/show/{id}', 'show');
+});
+//PENERIMA
+Route::controller(CalonPenerimaController::class)->prefix('penerima')->group(function () {
+    Route::get('/', 'index');
+    Route::post('/store', 'store');
     Route::get('/show/{id}', 'show');
 });
 

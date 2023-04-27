@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\KepalaKeluarga;
 use App\Models\Daerah;
+use App\Http\Resources\Keluarga as KeluargaResource;
 
 class KepalaKelController extends Controller
 {
@@ -23,21 +24,7 @@ class KepalaKelController extends Controller
         ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
         ->paginate(10);
 
-        return response()->json([
-            'data' => $kepala
-        ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $kepala = Daerah::all();
-
-        return response()->json([$kepala]);
+        return response(KeluargaResource::collection($kepala));
     }
 
     /**
@@ -56,11 +43,18 @@ class KepalaKelController extends Controller
             'jenis_kelamin' => 'required',
         ]);
 
-        $kepala = KepalaKeluarga::create($request->all());
+        $kepala = New KepalaKeluarga;
+        $kepala->nama = $request->nama;
+        $kepala->id_daerahs = $request->id_daerahs;
+        $kepala->NIK = $request->NIK;
+        $kepala->alamat = $request->alamat;
+        $kepala->tanggal_lahir = $request->tanggal_lahir;
+        $kepala->jenis_kelamin = $request->jenis_kelamin;
+        $kepala->bobot = json_encode($request->bobot);
+        $kepala->save();
 
-        return response()->json([
-            'data' => $kepala
-        ]);
+
+        return response(new KeluargaResource($kepala));
     }
 
     /**

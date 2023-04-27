@@ -20,6 +20,11 @@ class KepalaKeluarga extends Model
         'alamat',
     ];
 
+    public function Penerima()
+    {
+        return $this->hasMany(Penerima::class, 'id_kepala_keluargas', 'id');
+    }
+
     public function Daerah()
     {
         return $this->BelongsTo(Daerah::class, 'id_daerahs', 'id');
