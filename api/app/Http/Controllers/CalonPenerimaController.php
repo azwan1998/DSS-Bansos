@@ -28,25 +28,44 @@ class CalonPenerimaController extends Controller
      */
     public function store(Request $request)
     {
-        $mainData = KepalaKeluarga::select('id','bobot')->get();
+        $mainData = KepalaKeluarga::select('id','bobot')->orderBy('id' , 'ASC')->get();
 
         //periode 
         $getPeriode = Penerima::select('periode')->orderBy('periode', 'DESC')->first();
         $periode = $getPeriode->periode +1;
 
+        $pembagi = [];
+        $testIn = [];
+        $bagi2;
+        $dataProses;
+
         foreach ($mainData as $d) {
+            // $dataProsess [] = json_decode($d->bobot);
+            $dataProses []  = json_decode($d->bobot);
+            // $bagi2 [] = ;
+            // foreach ($dataProses as $test){
+ 
+            // }
+        }
 
-            //id kepala keluarga
-            $idKepala = $d->id;
-            
-            //algoritma
-            $dataProses = $d;
-
-            $pembagi = 1;
-            $nilaiFinal = 200;
+        // foreach ($dataProses as $data){
+        //     // $bagi2 [] = json_decode($data->nilai / 2);
+        //     $bagi2 [] = json_decode($data);
+        // }
+        // dd($dataProsess);exit;
+        // dd($bagi2);exit;
+        dd($dataProses);exit;
+        
+        dd('bntr lagi siap yeee');
+        //inputkan ke database
+        foreach ($mainData as $y){
 
             //rangking
             $rangking = 2;
+
+            //id kepala keluarga
+            $idKepala = $d->id;
+            $nilaiFinal = 300;
 
             $penerima = New Penerima;
             $penerima->id_kepala_keluargas = $idKepala;

@@ -24,6 +24,8 @@ class KepalaKelController extends Controller
         ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
         ->paginate(10);
 
+        // print_r($kepala);exit;
+
         return response(KeluargaResource::collection($kepala));
     }
 

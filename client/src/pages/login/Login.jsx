@@ -49,12 +49,15 @@ function Login() {
         {/* /.login-logo */}
         <div className="card card-outline card-primary">
           <div className="card-header text-center">
-            <a href="../../index2.html" className="h1">
-              <b>Admin</b>LTE
+          <img src="../../dist/img/log.png" className="brand-image " style={{height: '100px'}} /> <br/>
+            <a href="#" className="h1">
+              <b>DSS <br/></b>
+              {/* <h3><b> Pendukung Keputusan</b></h3> */}
+              <h6>Bantuan Sosial DPW-PKB Provinsi Riau</h6>
             </a>
           </div>
           <div className="card-body">
-            <p className="login-box-msg">Sign in to start your session</p>
+            <p className="login-box-msg">Silahkan Login </p>
             {/* {validation.message && (
               <div className="alert alert-danger">{validation.message}</div>
             )} */}
@@ -109,14 +112,14 @@ function Login() {
                 </button>
               </div>
             </form>
-            <p className="mb-1">
+            {/* <p className="mb-1">
               <a href="forgot-password.html">I forgot my password</a>
             </p>
             <p className="mb-0">
               <a href="register.html" className="text-center">
                 Register a new membership
               </a>
-            </p>
+            </p> */}
           </div>
           {/* /.card-body */}
         </div>

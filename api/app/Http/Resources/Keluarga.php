@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\Daerah;
 
 class Keluarga extends JsonResource
 {
@@ -14,29 +15,16 @@ class Keluarga extends JsonResource
      */
     public function toArray($request)
     {
-        // dd($this);
-        $temp = json_decode($this->bobot);
-
-        // $bobot;
-
-        // foreach ($temp as $index => $bobots) {
-        //     $bobot [] = "array index : {$index}";
-        //     foreach ($bobots as $key) {
-        //         if ($key->nilai !== null){
-        //             print_r('adaa');exit;
-        //         }
-        //     }
-        // }
-
-        // dd($bobot);
-        return [
+        
+        return  [
             'id' => $this->id,
             'nama' => $this->nama,
             'NIK' => $this->NIK,
             'tanggal_lahir' => $this->tanggal_lahir,
             'jenis_kelamin' => $this->jenis_kelamin,
             'alamat' => $this->alamat,
-            'bobot' => $temp
+            'daerah' => $this->nama_daerah,
+            'bobot' => json_decode($this->bobot)
         ];
     }
 }
