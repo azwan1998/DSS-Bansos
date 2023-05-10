@@ -8,6 +8,7 @@ use App\Http\Controllers\DaerahController;
 use App\Http\Controllers\KepalaKelController;
 use App\Http\Controllers\SubKriteriaController;
 use App\Http\Controllers\CalonPenerimaController;
+use App\Http\Controllers\TopsisController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,4 +67,10 @@ Route::controller(CalonPenerimaController::class)->prefix('penerima')->group(fun
     Route::post('/store', 'store');
     Route::get('/show/{id}', 'show');
 });
+
+
+Route::controller(TopsisController::class)->prefix('algoritma')->group(function () {
+    Route::post('/topsis', 'topsis');
+});
+
 
