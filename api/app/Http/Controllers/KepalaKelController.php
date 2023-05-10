@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\KepalaKeluarga;
 use App\Models\Daerah;
 use App\Http\Resources\Keluarga as KeluargaResource;
+use App\Exports\KepalaKeluargaExport;
 
 class KepalaKelController extends Controller
 {
@@ -78,9 +79,9 @@ class KepalaKelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function excel(Request $request)
     {
-        //
+        return Excel::download(new KepalaKeluargaExport, 'keluarga.xlsx');
     }
 
     /**
@@ -96,9 +97,10 @@ class KepalaKelController extends Controller
         $kepala->nama = $request->nama;
         $kepala->id_daerahs = $request->id_daerahs;
         $kepala->NIK = $request->NIK;
+        $kepala->alamat = $request->alamat;
         $kepala->tanggal_lahir = $request->tanggal_lahir;
         $kepala->jenis_kelamin = $request->jenis_kelamin;
-        $kepala->alamat = $request->alamat;
+        $kepala->bobot = json_encode($request->bobot);
         $kepala->save();
 
         return response()->json([
