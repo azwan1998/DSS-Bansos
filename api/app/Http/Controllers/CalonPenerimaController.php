@@ -32,7 +32,6 @@ class CalonPenerimaController extends Controller
                 ->join('Kepala_keluargas','kepala_keluargas.id','=','calon_penerimas.id_kepala_keluargas')
                 ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
                 ->where('calon_penerimas.periode', $request->periode)
-                // ->where('daerahs.id', $request->id_daerahs)
                 ->orderBy('calon_penerimas.nilai', 'DESC')
                 ->get();
         }
@@ -128,7 +127,7 @@ class CalonPenerimaController extends Controller
             return $a['distance'] <=> $b['distance'];
         });
         
-        return response()->json([],204);
+        return response()->json(204);
     }
 
     /**
