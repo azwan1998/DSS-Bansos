@@ -21,6 +21,7 @@ class SubKriteriaController extends Controller
     {
         $sub = SubKriteria::select('sub_kriterias.*','kriterias.nama_kriteria','kriterias.code')
         ->join('Kriterias','kriterias.id','=','sub_kriterias.id_kriterias')
+        ->where('kriterias.isDeleted', false)
         ->paginate(10);
 
         return response()->json([

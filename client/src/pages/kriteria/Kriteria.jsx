@@ -36,7 +36,7 @@ function Kriteria() {
 
     const formData = new FormData();
 
-    formData.append("code", code);
+    // formData.append("code", code);
     formData.append("nama_kriteria", nama);
     formData.append("bobot_kriteria", bobot);
     formData.append("atribut", atribut);
@@ -121,8 +121,8 @@ function Kriteria() {
     //fetch user from Rest API
     await axios.get("http://127.0.0.1:8000/api/kriteria").then((response) => {
       //set response user to state
-      setKriteria(response.data.data.data);
-      // console.log(response.data.data.data);
+      setKriteria(response.data);
+      // console.log(response.data.data);
     });
   };
   // console.log(keluarga);
@@ -182,7 +182,7 @@ function Kriteria() {
                   </Modal.Header>
                   <Modal.Body>
                     <Form onSubmit={handleSubmit}>
-                      <Form.Group
+                      {/* <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
@@ -194,7 +194,7 @@ function Kriteria() {
                           value={code}
                           onChange={(e) => setCode(e.target.value)}
                         />
-                      </Form.Group>
+                      </Form.Group> */}
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
@@ -416,7 +416,7 @@ function Kriteria() {
                     <tr key={test.id}>
                       <td>{test.id}</td>
                       <td>{test.code}</td>
-                      <td>{test.nama_kriteria}</td>
+                      <td>{test.nama}</td>
                       <td>{test.bobot_kriteria}</td>
                       <td>{test.atribut}</td>
                       <td>

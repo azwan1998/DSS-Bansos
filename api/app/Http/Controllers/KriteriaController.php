@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Kriteria;
+use App\Http\Resources\Kriteria as KriteriaResource;
 
 
 class KriteriaController extends Controller
@@ -22,14 +23,12 @@ class KriteriaController extends Controller
     public function index(Request $request)
     {
         if($request->list){
-            $kriteria = Kriteria::all();
+            $kriteria = Kriteria::where('list' , true)->where('isDeleted', false)->get();
         }else{
-            $kriteria = Kriteria::paginate(10);
+            $kriteria = Kriteria::where('isDeleted', false)->paginate(10);
         }
     
-        return response()->json([   
-            'data' => $kriteria
-        ]);
+        return response(KriteriaResource::collection($kriteria));
     }
 
     /**
@@ -51,13 +50,21 @@ class KriteriaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'code' => 'required',
+            // 'code' => 'required',
             'nama_kriteria' => 'required',
             'bobot_kriteria' => 'required',
             'atribut' => 'required'
         ]);
+        $getCode = Kriteria::all();
 
-        $kriteria = Kriteria::create($request->all());
+        $code = 'C'.(count($getCode)+1);
+
+        $kriteria = new Kriteria;
+        $kriteria->code = $code;
+        $kriteria->nama_kriteria = $request->nama_kriteria;
+        $kriteria->bobot_kriteria = $request->bobot_kriteria;
+        $kriteria->atribut = $request->atribut;
+        $kriteria->save();
 
         return response()->json([
             'data' => $kriteria
