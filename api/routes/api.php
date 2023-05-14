@@ -67,6 +67,7 @@ Route::controller(CalonPenerimaController::class)->prefix('penerima')->group(fun
     Route::get('/', 'index');
     Route::post('/store', 'store');
     Route::get('/show/{id}', 'show');
+    Route::get('/excel', 'excel');
 });
 
 

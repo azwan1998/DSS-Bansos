@@ -12,7 +12,13 @@ class KepalaKeluargaExport implements FromCollection
     */
     public function collection()
     {
-        $kepala = KepalaKeluarga::all();
-        return $kepala;
+        $kepala = KepalaKeluarga::select('kepala_keluargas.id','kepala_keluargas.nama','kepala_keluargas.NIK','kepala_keluargas.alamat',
+                                'kepala_keluargas.jenis_kelamin','kepala_keluargas.tanggal_lahir','daerahs.nama_daerah')
+                                ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
+                                ->get();
+
+        return $this;
+                    
     }
+
 }

@@ -7,6 +7,7 @@ use App\Models\KepalaKeluarga;
 use App\Models\Daerah;
 use App\Http\Resources\Keluarga as KeluargaResource;
 use App\Exports\KepalaKeluargaExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class KepalaKelController extends Controller
 {

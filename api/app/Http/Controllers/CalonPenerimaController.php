@@ -9,6 +9,8 @@ use App\Models\Penerima;
 use App\Models\KepalaKeluarga;
 use App\Models\Kriteria;
 use App\Http\Resources\CalonPenerima as CalonPenerimaResource;
+use App\Exports\CalonPenerimaExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CalonPenerimaController extends Controller
 {
@@ -49,7 +51,16 @@ class CalonPenerimaController extends Controller
      */
     public function store(Request $request)
     {
-        $mainData = KepalaKeluarga::select('id','bobot')->orderBy('id' , 'ASC')->get();
+        if($request->id_daerahs){
+            $mainData = KepalaKeluarga::select('kepala_keluargas.id','kepala_keluargas.bobot')
+                    ->join('Daerahs','daerahs.id', '=' , 'kepala_keluargas.id_daerahs')
+                    ->where('daerahs.id', $request->id_daerahs)
+                    ->orderBy('id', 'ASC')
+                    ->get();
+        }else{
+            $mainData = KepalaKeluarga::select('id','bobot')->orderBy('id' , 'ASC')->get();
+        }
+        
 
         $bobot = Kriteria::select('bobot_kriteria','atribut')->get();
 
@@ -128,6 +139,11 @@ class CalonPenerimaController extends Controller
         });
         
         return response()->json(204);
+    }
+
+    public function excel(Request $request)
+    {
+        return Excel::download(new CalonPenerimaExport($request->periode , $request->id_daerahs), 'calonPenerima.xlsx');
     }
 
     /**
