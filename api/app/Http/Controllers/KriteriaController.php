@@ -126,8 +126,9 @@ class KriteriaController extends Controller
      */
     public function destroy($id)
     {
-        $kriteria = Kriteria::find($id);
-        $kriteria->delete();
+        $kriteria = Kriteria::findOrNew($id);
+        $kriteria->isDeleted = true;
+        $kriteria->save();
 
         return response()->json([
             'messagge' => 'kriteria berhasil dihapus'
