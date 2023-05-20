@@ -1,11 +1,12 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate,Link, useSearchParams } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
-import { DeleteOutline,EditOutlined, InfoOutlined } from '@material-ui/icons';
-
+import { DeleteOutline, EditOutlined, InfoOutlined } from "@material-ui/icons";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 function Kriteria() {
   const [kriteria, setKriteria] = useState([]);
@@ -14,11 +15,11 @@ function Kriteria() {
   const [show1, setShow1] = useState(false);
   const [show2, setShow2] = useState(false);
   const [code, setCode] = useState("");
-  const [nama, setNama] = useState("")
+  const [nama, setNama] = useState("");
   const [bobot, setBobot] = useState("");
   const [atribut, setAtribut] = useState("");
   const [validation, setValidation] = useState([]);
-  const [id,setId]  = useSearchParams();
+  const [id, setId] = useSearchParams();
   id.get("id");
   const param = id.get("id");
   console.log(param);
@@ -31,7 +32,6 @@ function Kriteria() {
   const handleShow2 = () => setShow2(true);
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
     const formData = new FormData();
@@ -46,7 +46,7 @@ function Kriteria() {
       .then((response) => {
         setShow(false);
         //redirect to dashboard
-        fetchData()
+        fetchData();
       })
       .catch((error) => {
         //assign error to state "validation"
@@ -55,41 +55,43 @@ function Kriteria() {
       });
   };
 
-  const ShowKriteria = async () =>{
-
-    await axios.get(`http://127.0.0.1:8000/api/kriteria/show/${param}`).then((response) => {
-      //set response user to state
-      setCode(response.data.data.code);
-      setNama(response.data.data.nama_kriteria);
-      setBobot(response.data.data.bobot_kriteria);
-      setAtribut(response.data.data.atribut);
-      handleShow1();
-      // console.log(response.data.data.data);
-    });
+  const ShowKriteria = async () => {
+    await axios
+      .get(`http://127.0.0.1:8000/api/kriteria/show/${param}`)
+      .then((response) => {
+        //set response user to state
+        setCode(response.data.data.code);
+        setNama(response.data.data.nama_kriteria);
+        setBobot(response.data.data.bobot_kriteria);
+        setAtribut(response.data.data.atribut);
+        handleShow1();
+        // console.log(response.data.data.data);
+      });
   };
 
-  const HandleDelete = async () =>{
+  const HandleDelete = async () => {
+    await axios
+      .post(`http://127.0.0.1:8000/api/kriteria/delete/${param}`)
+      .then((response) => {
+        fetchData();
+        // console.log(response.data.data.data);
+      });
+  };
 
-    await axios.post(`http://127.0.0.1:8000/api/kriteria/delete/${param}`).then((response) => {
-      fetchData();
-      // console.log(response.data.data.data);
-    });
-  }
-
-  const ShowKriteria1 = async () =>{
-
-    await axios.get(`http://127.0.0.1:8000/api/kriteria/show/${param}`).then((response) => {
-      //set response user to state
-      setCode(response.data.data.code);
-      setNama(response.data.data.nama_kriteria);
-      setBobot(response.data.data.bobot_kriteria);
-      setAtribut(response.data.data.atribut);
-      handleShow2();
-      // console.log(response.data.data.data);
-    });
+  const ShowKriteria1 = async () => {
+    await axios
+      .get(`http://127.0.0.1:8000/api/kriteria/show/${param}`)
+      .then((response) => {
+        //set response user to state
+        setCode(response.data.data.code);
+        setNama(response.data.data.nama_kriteria);
+        setBobot(response.data.data.bobot_kriteria);
+        setAtribut(response.data.data.atribut);
+        handleShow2();
+        // console.log(response.data.data.data);
+      });
   };
   const handleEdit = async (e) => {
-
     e.preventDefault();
     const formData = new FormData();
 
@@ -103,7 +105,7 @@ function Kriteria() {
       .then((response) => {
         setShow1(false);
         //redirect to dashboard
-        fetchData()
+        fetchData();
       })
       .catch((error) => {
         //assign error to state "validation"
@@ -163,18 +165,27 @@ function Kriteria() {
         <section className="content">
           {/* Default box */}
           <div className="card">
-            <div className="card-header">
-              <h3 className="card-title">Data Kriteria</h3>
-            </div>
             <div className="card-body">
               {/* desai nya belom ini */}
               {/* modal input data */}
               <>
-                <Button variant="primary" onClick={handleShow}>
-                  Input Data Kriteria
-                </Button>
-                <br/>
-                <br/> 
+                <Row>
+                  <Col>
+                    <Form.Control
+                      className="me-auto"
+                      placeholder="Searching. . . . "
+                    />
+                  </Col>
+                  <Col></Col>
+                  <Col md="end">
+                    <Button variant="primary" onClick={handleShow}>
+                      Input Data Kriteria
+                    </Button>
+                  </Col>
+                </Row>
+
+                <br />
+                <br />
 
                 <Modal show={show} onHide={handleClose}>
                   <Modal.Header closeButton>
@@ -213,12 +224,12 @@ function Kriteria() {
                         controlId="exampleForm.ControlInput1"
                       >
                         <Form.Label>Bobot Kriteria</Form.Label>
-                        <Form.Control 
-                        type="number" 
-                        placeholder="5" 
-                        autoFocus
-                        value={bobot}
-                        onChange={(e) => setBobot(e.target.value)} 
+                        <Form.Control
+                          type="number"
+                          placeholder="5"
+                          autoFocus
+                          value={bobot}
+                          onChange={(e) => setBobot(e.target.value)}
                         />
                       </Form.Group>
                       <Form.Group
@@ -244,7 +255,11 @@ function Kriteria() {
                     <Button variant="secondary" onClick={handleClose}>
                       Close
                     </Button>
-                    <Button type="submit" variant="primary" onClick={handleClose && handleSubmit}>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      onClick={handleClose && handleSubmit}
+                    >
                       Submit
                     </Button>
                   </Modal.Footer>
@@ -257,7 +272,7 @@ function Kriteria() {
                     <Modal.Title>Edit Data Kriteria</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                      <Form onSubmit={handleEdit}>
+                    <Form onSubmit={handleEdit}>
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
@@ -287,11 +302,11 @@ function Kriteria() {
                         controlId="exampleForm.ControlInput1"
                       >
                         <Form.Label>Bobot Kriteria</Form.Label>
-                        <Form.Control 
-                        type="number" 
-                        autoFocus
-                        value={bobot}
-                        onChange={(e) => setBobot(e.target.value)} 
+                        <Form.Control
+                          type="number"
+                          autoFocus
+                          value={bobot}
+                          onChange={(e) => setBobot(e.target.value)}
                         />
                       </Form.Group>
                       <Form.Group
@@ -317,7 +332,11 @@ function Kriteria() {
                     <Button variant="secondary" onClick={handleClose1}>
                       Close
                     </Button>
-                    <Button type="submit" variant="primary" onClick={handleClose1 && handleEdit}>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      onClick={handleClose1 && handleEdit}
+                    >
                       Submit
                     </Button>
                   </Modal.Footer>
@@ -330,7 +349,7 @@ function Kriteria() {
                     <Modal.Title>Show Data Kriteria</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                      <Form>
+                    <Form>
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
@@ -362,12 +381,12 @@ function Kriteria() {
                         controlId="exampleForm.ControlInput1"
                       >
                         <Form.Label>Bobot Kriteria</Form.Label>
-                        <Form.Control 
-                        type="number" 
-                        autoFocus
-                        disabled
-                        value={bobot}
-                        onChange={(e) => setBobot(e.target.value)} 
+                        <Form.Control
+                          type="number"
+                          autoFocus
+                          disabled
+                          value={bobot}
+                          onChange={(e) => setBobot(e.target.value)}
                         />
                       </Form.Group>
                       <Form.Group
@@ -394,7 +413,11 @@ function Kriteria() {
                     <Button variant="secondary" onClick={handleClose2}>
                       Close
                     </Button>
-                    <Button type="submit" variant="primary" onClick={ShowKriteria}>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      onClick={ShowKriteria}
+                    >
                       Submit
                     </Button>
                   </Modal.Footer>
@@ -420,23 +443,34 @@ function Kriteria() {
                       <td>{test.bobot_kriteria}</td>
                       <td>{test.atribut}</td>
                       <td>
-                        <Button variant="outline-warning" as={Link} to={`/kriteria?id=${test.id}`} onClick={ShowKriteria}><EditOutlined /></Button>{' '}
-                        <Button variant="outline-info" as={Link} to={`/kriteria?id=${test.id}`} onClick={ShowKriteria1}><InfoOutlined /></Button>{' '}
-                        <Button variant="outline-danger" as={Link} to={`/kriteria?id=${test.id}`} onClick={HandleDelete}><DeleteOutline /></Button>
+                        <Button
+                          variant="outline-warning"
+                          as={Link}
+                          to={`/kriteria?id=${test.id}`}
+                          onClick={ShowKriteria}
+                        >
+                          <EditOutlined />
+                        </Button>{" "}
+                        <Button
+                          variant="outline-info"
+                          as={Link}
+                          to={`/kriteria?id=${test.id}`}
+                          onClick={ShowKriteria1}
+                        >
+                          <InfoOutlined />
+                        </Button>{" "}
+                        <Button
+                          variant="outline-danger"
+                          as={Link}
+                          to={`/kriteria?id=${test.id}`}
+                          onClick={HandleDelete}
+                        >
+                          <DeleteOutline />
+                        </Button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
-                <tfoot>
-                  <tr>
-                    <th>ID</th>
-                    <th>Code</th>
-                    <th>Nama Kriteria</th>
-                    <th>Bobot</th>
-                    <th>Atribut</th>
-                    <th>Action</th>
-                  </tr>
-                </tfoot>
               </table>
             </div>
           </div>

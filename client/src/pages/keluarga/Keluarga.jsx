@@ -16,17 +16,76 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 function Keluarga({ index, item }) {
+  //
   const [keluarga, setKeluarga] = useState([]);
   const [daerah, setDaerah] = useState([]);
   const [kriteria, setKriteria] = useState([]);
   const history = useNavigate();
+
+  const [nama, setNama] = useState("");
+  const [NIK, setNIK] = useState("");
+  const [tanggal_lahir, setTanggal_lahir] = useState("");
+  const [jenis_kelamin, setJenis_kelamin] = useState("");
+  const [alamat, setAlamat] = useState("");
+  const [id_daerahs, setId_daerah] = useState("");
+  const [bobot, setBobot] = useState([]);
+  
+  //
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   //token
   const token = localStorage.getItem("token");
+
+  // const looping = async () => {
+  //   {bobot.map((bb) => (
+  //     {bb}
+  //   ))}
+  // }
+  
   // console.log(token);
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+
+    // const bobotReal = [];
+
+    // const tt = [];
+
+    // looping();
+
+    // {bobot.map((test, index) => (
+
+    // ))}
+
+
+    const formData = new FormData();
+
+    // formData.append("code", code);
+    formData.append("nama", nama);
+    formData.append("NIK", NIK);
+    formData.append("tanggal_lahir", tanggal_lahir);
+    formData.append("jenis_kelamin", jenis_kelamin);
+    formData.append("id_daerahs", id_daerahs);
+    formData.append("alamat", alamat);
+    formData.append("bobot", bobot)
+
+    await axios
+      .post("http://127.0.0.1:8000/api/kepala/store", formData)
+      .then((response) => {
+        setShow(false);
+        //redirect to dashboard
+        fetchData()
+
+        console.log(bobot);
+      });
+      // .catch((error) => {
+      //   //assign error to state "validation"
+      //   setValidation(error.response.data.errors);
+      //   // console.log(error.response.data);
+      // });
+  };
   const fetchData = async () => {
     //set axios header dengan type Authorization + Bearer token
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -37,6 +96,16 @@ function Keluarga({ index, item }) {
       // console.log(response.data);
     });
   };
+
+  const handleExcel = async () => {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+    await axios.get("http://127.0.0.1:8000/api/kepala/excel").then((response) => {
+      //set response user to state
+      // setKeluarga(response.data);
+      // console.log(response.data);
+    });
+  }
 
   const dataDaerah = async () => {
 
@@ -115,7 +184,7 @@ function Keluarga({ index, item }) {
                   <Button variant="primary" onClick={handleShow}>
                     Input Data Keluarga
                   </Button>{" "}
-                  <Button variant="secondary">Export Excel</Button>
+                  <Button variant="secondary" onClick={handleExcel}>Export Excel</Button>
                 </Col>
               </Row>
               <br />
@@ -156,7 +225,7 @@ function Keluarga({ index, item }) {
                   <Modal.Title>Input Data Keluarga</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <Form onSubmit={handleClose}>
+                  <Form onSubmit={handleSubmit}>
                     <Form.Group
                       // className="mb-3"
                       controlId="exampleForm.ControlInput1"
@@ -167,8 +236,7 @@ function Keluarga({ index, item }) {
                         type="text"
                         placeholder="kurnial"
                         autoFocus
-                        // value={code}
-                        // onChange={(e) => setCode(e.target.value)}
+                        onChange={(e) => setNama(e.target.value)}
                       />
                     </Form.Group>
 
@@ -182,8 +250,7 @@ function Keluarga({ index, item }) {
                         type="text"
                         placeholder="017284278428"
                         autoFocus
-                        // value={nama}
-                        // onChange={(e) => setNama(e.target.value)}
+                        onChange={(e) => setNIK(e.target.value)}
                       />
                     </Form.Group>
                     <Form.Group
@@ -196,8 +263,7 @@ function Keluarga({ index, item }) {
                         type="date"
                         placeholder="10-10-2000"
                         autoFocus
-                        // value={bobot}
-                        // onChange={(e) => setBobot(e.target.value)}
+                        onChange={(e) => setTanggal_lahir(e.target.value)}
                       />
                     </Form.Group>
 
@@ -212,7 +278,7 @@ function Keluarga({ index, item }) {
                         size="Lg"
                         type="text"
                         // value={atribut}
-                        // onChange={(e) => setAtribut(e.target.value)}
+                        onChange={(e) => setJenis_kelamin(e.target.value)}
                       >
                         <option>
                           - - - - - - - - - - - - - - - SILAHKAN PILIH - - - - -
@@ -232,8 +298,7 @@ function Keluarga({ index, item }) {
                       <Form.Select
                         aria-label="Default select example"
                         size="lg"
-                        // value={atribut}
-                        // onChange={(e) => setAtribut(e.target.value)}
+                        onChange={(e) => setId_daerah(e.target.value)}
                       >
                         <option>
                           - - - - - - - - - - - - - - - SILAHKAN PILIH - - - - -
@@ -250,7 +315,12 @@ function Keluarga({ index, item }) {
                       controlId="exampleForm.ControlTextarea1"
                     >
                       <Form.Label>Alamat</Form.Label>
-                      <Form.Control as="textarea" rows={2} />
+                      <Form.Control 
+                      as="textarea" 
+                      rows={2} 
+                      onChange={(e) => setAlamat(e.target.value)}
+                      />
+                      
                     </Form.Group>
 
                     <Form.Group
@@ -263,8 +333,8 @@ function Keluarga({ index, item }) {
                         type="text"
                         placeholder="5"
                         autoFocus
-                        // value={nama}
-                        // onChange={(e) => setNama(e.target.value)}
+                        onChange={(e) => setBobot(e.target.value)}
+                        // onChange={handleChange}
                       />
                     </Form.Group>
 
@@ -278,8 +348,8 @@ function Keluarga({ index, item }) {
                         type="text"
                         placeholder="70"
                         autoFocus
-                        // value={nama}
-                        // onChange={(e) => setNama(e.target.value)}
+                        onChange={(e) => setBobot(e.target.value)}
+                        // onChange={handleChange}
                       />
                     </Form.Group>
 
@@ -294,8 +364,8 @@ function Keluarga({ index, item }) {
                       <Form.Select
                         aria-label="Default select example"
                         size="lg"
-                        // value={atribut}
-                        // onChange={(e) => setAtribut(e.target.value)}
+                        onChange={(e) => setBobot(e.target.value)}
+                        // onChange={handleChange}
                       >
                         <option>
                           - - - - - - - - - - - - - - - SILAHKAN PILIH - - - - -
@@ -315,7 +385,7 @@ function Keluarga({ index, item }) {
                   <Button variant="secondary" onClick={handleClose}>
                     Close
                   </Button>
-                  <Button type="submit" variant="primary" onClick={handleClose}>
+                  <Button type="submit" variant="primary" onClick={handleSubmit}>
                     Submit
                   </Button>
                 </Modal.Footer>

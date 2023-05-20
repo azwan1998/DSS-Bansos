@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\KepalaKeluarga;
 use App\Models\Daerah;
+use App\Models\Kriteria;
 use App\Http\Resources\Keluarga as KeluargaResource;
 use App\Exports\KepalaKeluargaExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -72,6 +73,19 @@ class KepalaKelController extends Controller
         return response()->json([
             'data' => $kepala
         ]);
+    }
+
+    public function count(Request $request)
+    {
+        if($request->kepala){
+            $count = KepalaKeluarga::count();
+        }else if($request->kriteria){
+            $count = Kriteria::count();
+        }else{
+            $count = Daerah::count();
+        }
+        
+        return response()->json($count);
     }
 
     /**

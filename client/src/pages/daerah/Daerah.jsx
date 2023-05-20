@@ -1,10 +1,12 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate,Link, useSearchParams } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
-import { DeleteOutline,EditOutlined, InfoOutlined } from '@material-ui/icons';
+import { DeleteOutline, EditOutlined, InfoOutlined } from "@material-ui/icons";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 function Daerah() {
   const [daerah, setDaerah] = useState([]);
@@ -17,7 +19,7 @@ function Daerah() {
   const [create, setCreate] = useState("");
   const [update, setUpdate] = useState("");
   const [validation, setValidation] = useState([]);
-  const [id,setId]  = useSearchParams();
+  const [id, setId] = useSearchParams();
   id.get("id");
   const param = id.get("id");
   console.log(param);
@@ -30,7 +32,6 @@ function Daerah() {
   const handleShow2 = () => setShow2(true);
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
     const formData = new FormData();
@@ -42,7 +43,7 @@ function Daerah() {
       .then((response) => {
         setShow(false);
         //redirect to dashboard
-        fetchData()
+        fetchData();
       })
       .catch((error) => {
         //assign error to state "validation"
@@ -51,39 +52,41 @@ function Daerah() {
       });
   };
 
-  const ShowKriteria = async () =>{
-
-    await axios.get(`http://127.0.0.1:8000/api/daerah/show/${param}`).then((response) => {
-      //set response user to state
-      setKecamatan(response.data.data.nama_daerah);
-      setCreate(response.data.data.created_at);
-      setUpdate(response.data.data.updated_at);
-      handleShow1();
-      // console.log(response.data.data.data);
-    });
+  const ShowKriteria = async () => {
+    await axios
+      .get(`http://127.0.0.1:8000/api/daerah/show/${param}`)
+      .then((response) => {
+        //set response user to state
+        setKecamatan(response.data.data.nama_daerah);
+        setCreate(response.data.data.created_at);
+        setUpdate(response.data.data.updated_at);
+        handleShow1();
+        // console.log(response.data.data.data);
+      });
   };
 
-  const HandleDelete = async () =>{
+  const HandleDelete = async () => {
+    await axios
+      .post(`http://127.0.0.1:8000/api/daerah/delete/${param}`)
+      .then((response) => {
+        fetchData();
+        // console.log(response.data.data.data);
+      });
+  };
 
-    await axios.post(`http://127.0.0.1:8000/api/daerah/delete/${param}`).then((response) => {
-      fetchData();
-      // console.log(response.data.data.data);
-    });
-  }
-
-  const ShowKriteria1 = async () =>{
-
-    await axios.get(`http://127.0.0.1:8000/api/daerah/show/${param}`).then((response) => {
-      //set response user to state
-      setKecamatan(response.data.data.nama_daerah);
-      setCreate(response.data.data.created_at);
-      setUpdate(response.data.data.updated_at);
-      handleShow2();
-      // console.log(response.data.data.data);
-    });
+  const ShowKriteria1 = async () => {
+    await axios
+      .get(`http://127.0.0.1:8000/api/daerah/show/${param}`)
+      .then((response) => {
+        //set response user to state
+        setKecamatan(response.data.data.nama_daerah);
+        setCreate(response.data.data.created_at);
+        setUpdate(response.data.data.updated_at);
+        handleShow2();
+        // console.log(response.data.data.data);
+      });
   };
   const handleEdit = async (e) => {
-
     e.preventDefault();
     const formData = new FormData();
 
@@ -94,7 +97,7 @@ function Daerah() {
       .then((response) => {
         setShow1(false);
         //redirect to dashboard
-        fetchData()
+        fetchData();
       })
       .catch((error) => {
         //assign error to state "validation"
@@ -113,7 +116,7 @@ function Daerah() {
     await axios.get("http://127.0.0.1:8000/api/daerah/").then((response) => {
       //set response user to state
       setDaerah(response.data.data);
-    //   console.log(response.data.data);
+      //   console.log(response.data.data);
     });
   };
   // console.log(keluarga);
@@ -129,44 +132,55 @@ function Daerah() {
   }, []);
   return (
     <div>
-        {/* Content Wrapper. Contains page content */}
-        <div className="content-wrapper">
+      {/* Content Wrapper. Contains page content */}
+      <div className="content-wrapper">
         {/* Content Header (Page header) */}
         <section className="content-header">
-            <div className="container-fluid">
+          <div className="container-fluid">
             <div className="row mb-2">
-                <div className="col-sm-6">
+              <div className="col-sm-6">
                 <h1>Data Daerah</h1>
-                </div>
-                <div className="col-sm-6">
+              </div>
+              <div className="col-sm-6">
                 <ol className="breadcrumb float-sm-right">
-                    <li className="breadcrumb-item"><a href="/">Home</a></li>
-                    <li className="breadcrumb-item active">Data Daerah</li>
+                  <li className="breadcrumb-item">
+                    <a href="/">Home</a>
+                  </li>
+                  <li className="breadcrumb-item active">Data Daerah</li>
                 </ol>
-                </div>
+              </div>
             </div>
-            </div>{/* /.container-fluid */}
+          </div>
+          {/* /.container-fluid */}
         </section>
         {/* Main content */}
         <section className="content">
-            {/* Default box */}
-            <div className="card">
-            <div className="card-header">
-                <h3 className="card-title">Data Daerah</h3>
-            </div>
+          {/* Default box */}
+          <div className="card">
             <div className="card-body">
-             {/* desai nya belom ini */}
+              {/* desai nya belom ini */}
               {/* modal input data */}
               <>
-                <Button variant="primary" onClick={handleShow}>
-                  Input Data Daerah
-                </Button>
-                <br/>
-                <br/> 
+                <Row>
+                  <Col>
+                    <Form.Control
+                      className="me-auto"
+                      placeholder="Searching. . . . "
+                    />
+                  </Col>
+                  <Col></Col>
+                  <Col md="end">
+                    <Button variant="primary" onClick={handleShow}>
+                      Input Data Daerah
+                    </Button>
+                  </Col>
+                </Row>
+                <br />
+                <br />
 
                 <Modal show={show} onHide={handleClose}>
                   <Modal.Header closeButton>
-                    <Modal.Title>Input Data Kriteria</Modal.Title>
+                    <Modal.Title>Input Data Daerah</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
                     <Form onSubmit={handleSubmit}>
@@ -189,7 +203,11 @@ function Daerah() {
                     <Button variant="secondary" onClick={handleClose}>
                       Close
                     </Button>
-                    <Button type="submit" variant="primary" onClick={handleClose && handleSubmit}>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      onClick={handleClose && handleSubmit}
+                    >
                       Submit
                     </Button>
                   </Modal.Footer>
@@ -202,7 +220,7 @@ function Daerah() {
                     <Modal.Title>Edit Data Kriteria</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                      <Form onSubmit={handleEdit}>
+                    <Form onSubmit={handleEdit}>
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
@@ -222,20 +240,25 @@ function Daerah() {
                     <Button variant="secondary" onClick={handleClose1}>
                       Close
                     </Button>
-                    <Button type="submit" variant="primary" onClick={handleClose1 && handleEdit}>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      onClick={handleClose1 && handleEdit}
+                    >
                       Submit
                     </Button>
                   </Modal.Footer>
                 </Modal>
               </>
+
               {/* MODAL SHOW DATA */}
               <>
                 <Modal show={show2} onHide={handleClose2}>
                   <Modal.Header closeButton>
-                    <Modal.Title>Show Data Kriteria</Modal.Title>
+                    <Modal.Title>Show Data Daerah</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                      <Form>
+                    <Form>
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
@@ -270,35 +293,47 @@ function Daerah() {
                 </thead>
                 <tbody>
                   {daerah.map((test, index) => (
-                    <tr key={test.id}>
+                    <tr key={index.id}>
                       <td>{test.id}</td>
                       <td>{test.nama_daerah}</td>
                       <td>{test.updated_at}</td>
                       <td>{test.created_at}</td>
                       <td>
-                        <Button variant="outline-warning" as={Link} to={`/daerah?id=${test.id}`} onClick={ShowKriteria}><EditOutlined /></Button>{' '}
-                        <Button variant="outline-info" as={Link} to={`/daerah?id=${test.id}`} onClick={ShowKriteria1}><InfoOutlined /></Button>{' '}
-                        <Button variant="outline-danger" as={Link} to={`/daerah?id=${test.id}`} onClick={HandleDelete}><DeleteOutline /></Button>
+                        <Button
+                          variant="outline-warning"
+                          as={Link}
+                          to={`/daerah?id=${test.id}`}
+                          onClick={ShowKriteria}
+                        >
+                          <EditOutlined />
+                        </Button>{" "}
+                        <Button
+                          variant="outline-info"
+                          as={Link}
+                          to={`/daerah?id=${test.id}`}
+                          onClick={ShowKriteria1}
+                        >
+                          <InfoOutlined />
+                        </Button>{" "}
+                        <Button
+                          variant="outline-danger"
+                          as={Link}
+                          to={`/daerah?id=${test.id}`}
+                          onClick={HandleDelete}
+                        >
+                          <DeleteOutline />
+                        </Button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
-                <tfoot>
-                  <tr>
-                    <th>ID</th>
-                    <th>Nama Daerah</th>
-                    <th>Updated At</th>
-                    <th>Created At</th>
-                    <th>Action</th>
-                  </tr>
-                </tfoot>
               </table>
             </div>
-            </div>
+          </div>
         </section>
-        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Daerah
+export default Daerah;

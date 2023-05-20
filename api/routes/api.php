@@ -53,6 +53,7 @@ Route::controller(KepalaKelController::class)->prefix('kepala')->group(function 
     Route::post('/delete/{id}', 'destroy');
     Route::get('/show/{id}', 'show');
     Route::get('/excel', 'excel');
+    Route::get('/count', 'count');
 });
 //SUB KRITERIA
 Route::controller(SubKriteriaController::class)->prefix('subkriteria')->group(function () {

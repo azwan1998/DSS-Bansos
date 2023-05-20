@@ -21,7 +21,24 @@ class CalonPenerimaController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->id_daerahs){
+        $newPeriode = Penerima::select('periode')->orderBy('periode', 'DESC')->first();
+
+        if ($request->daerah){
+            $calon = Penerima::select('calon_penerimas.*','kepala_keluargas.nama','kepala_keluargas.NIK','daerahs.nama_daerah')
+                ->join('Kepala_keluargas','kepala_keluargas.id','=','calon_penerimas.id_kepala_keluargas')
+                ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
+                ->where('calon_penerimas.periode', $newPeriode->periode)
+                ->where('daerahs.id', $request->id_daerahs)
+                ->orderBy('calon_penerimas.nilai', 'DESC')
+                ->get();
+        }else if($request->periode){
+            $calon = Penerima::select('calon_penerimas.*','kepala_keluargas.nama','kepala_keluargas.NIK','daerahs.nama_daerah')
+                ->join('Kepala_keluargas','kepala_keluargas.id','=','calon_penerimas.id_kepala_keluargas')
+                ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
+                ->where('calon_penerimas.periode', $request->periode)
+                ->orderBy('calon_penerimas.nilai', 'DESC')
+                ->get();
+        }else if($request->id_daerahs){
             $calon = Penerima::select('calon_penerimas.*','kepala_keluargas.nama','kepala_keluargas.NIK','daerahs.nama_daerah')
                 ->join('Kepala_keluargas','kepala_keluargas.id','=','calon_penerimas.id_kepala_keluargas')
                 ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
@@ -33,13 +50,11 @@ class CalonPenerimaController extends Controller
             $calon = Penerima::select('calon_penerimas.*','kepala_keluargas.nama','kepala_keluargas.NIK','daerahs.nama_daerah')
                 ->join('Kepala_keluargas','kepala_keluargas.id','=','calon_penerimas.id_kepala_keluargas')
                 ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
-                ->where('calon_penerimas.periode', $request->periode)
+                ->where('calon_penerimas.periode', $newPeriode->periode)
                 ->orderBy('calon_penerimas.nilai', 'DESC')
                 ->get();
         }
         
-
-        // dd($calon);
         return response(CalonPenerimaResource::collection($calon));
     }
 
