@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\KepalaKeluarga;
 use App\Models\Daerah;
 use App\Models\Kriteria;
 use App\Http\Resources\Keluarga as KeluargaResource;
-use App\Exports\KepalaKeluargaExport;
+use App\Exports\CalonPenerimaExport;
+use App\Exports\KepalaKelExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class KepalaKelController extends Controller
@@ -96,7 +99,8 @@ class KepalaKelController extends Controller
      */
     public function excel(Request $request)
     {
-        return Excel::download(new KepalaKeluargaExport, 'keluarga.xlsx');
+        // dd($request->id_daerahs);
+        return Excel::download(new KepalaKelExport($request->id_daerahs), 'keluarga.xlsx');
     }
 
     /**

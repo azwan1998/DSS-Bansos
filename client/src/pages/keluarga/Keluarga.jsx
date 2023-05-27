@@ -8,12 +8,10 @@ import {
   DeleteOutline,
   EditOutlined,
   InfoOutlined,
-  SearchOutlined,
 } from "@material-ui/icons";
-import Stack from "react-bootstrap/Stack";
-import { Container } from "@material-ui/core";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import fileDownload from 'js-file-download';
 
 function Keluarga({ index, item }) {
   //
@@ -34,6 +32,10 @@ function Keluarga({ index, item }) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const [show1, setShow1] = useState(false);
+  const handleClose1 = () => setShow1(false);
+  const handleShow1 = () => setShow1(true);
 
   //token
   const token = localStorage.getItem("token");
@@ -99,12 +101,14 @@ function Keluarga({ index, item }) {
 
   const handleExcel = async () => {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-    await axios.get("http://127.0.0.1:8000/api/kepala/excel").then((response) => {
+    //fetch user from Rest API
+    console.log(id_daerahs);
+    await axios.get(`http://127.0.0.1:8000/api/kepala/excel?id_daerahs=${id_daerahs}`,{responseType: 'blob',}).then((response) => {
       //set response user to state
-      // setKeluarga(response.data);
-      // console.log(response.data);
-    });
+      // setCalonPenerima(response.data);
+      fileDownload(response.data, 'KepalaKeluarga.xlsx');
+        // console.log(response.data.data);
+    },[]);
   }
 
   const dataDaerah = async () => {
@@ -184,7 +188,7 @@ function Keluarga({ index, item }) {
                   <Button variant="primary" onClick={handleShow}>
                     Input Data Keluarga
                   </Button>{" "}
-                  <Button variant="secondary" onClick={handleExcel}>Export Excel</Button>
+                  <Button variant="secondary" onClick={handleShow1}>Export Excel</Button>
                 </Col>
               </Row>
               <br />
@@ -386,6 +390,40 @@ function Keluarga({ index, item }) {
                     Close
                   </Button>
                   <Button type="submit" variant="primary" onClick={handleSubmit}>
+                    Submit
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+              <Modal show={show1} onHide={handleClose1}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Filter Proses Data Penerima</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Form onSubmit={handleClose1}>
+                  <Form.Group
+                      className="mb-3"
+                      controlId="exampleForm.ControlInput1"
+                    >
+                      <Form.Label>Daerah</Form.Label>
+                      <br />
+                      <Form.Select
+                        aria-label="Default select example"
+                        size="lg"
+                        onChange={(e) => setId_daerah(e.target.value)}
+                      >
+                        <option value={'null'}>Semua Daerah</option>
+                        {daerah.map((gg) => (
+                          <option value={gg.id}>{gg.nama_daerah}</option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>           
+                  </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={handleClose1}>
+                    Close
+                  </Button>
+                  <Button type="submit" variant="primary" onClick={handleExcel}>
                     Submit
                   </Button>
                 </Modal.Footer>

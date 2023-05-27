@@ -5,24 +5,23 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import {
-  Autorenew,
-  Crop169,
   DeleteOutline,
-  DescriptionOutlined,
-  EditOutlined,
-  GridOnOutlined,
   InfoOutlined,
 } from "@material-ui/icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
+import fileDownload from 'js-file-download';
 
 function CalonPenerima() {
   const [CalonPenerima, setCalonPenerima] = useState([]);
   const [daerah, setDaerah] = useState([]);
+  const [id_daerahs,setId_daerah] = useState();
   const history = useNavigate();
+
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   //token
   const token = localStorage.getItem("token");
   // console.log(token);
@@ -43,8 +42,32 @@ function CalonPenerima() {
     await axios.get("http://127.0.0.1:8000/api/daerah").then((response) => {
       //set response user to state
       setDaerah(response.data.data);
-        console.log(response.data.data);
+        // console.log(response.data.data);
     });
+  };
+
+  const Proses = async () => {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    //fetch user from Rest API
+    console.log(id_daerahs);
+    await axios.post(`http://127.0.0.1:8000/api/penerima/store?id_daerahs=${id_daerahs}`).then((response) => {
+      //set response user to state
+      // setCalonPenerima(response.data);
+      handleClose();
+      fetchData();
+        // console.log(response.data.data);
+    },[]);
+  };
+
+  const Excel = async () => {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    //fetch user from Rest API
+    await axios.get(`http://127.0.0.1:8000/api/penerima/excel`,{responseType: 'blob',}).then((response) => {
+      //set response user to state
+      // setCalonPenerima(response.data);
+      fileDownload(response.data, 'calonPenerima.xlsx');
+        // console.log(response.data.data);
+    },[]);
   };
 
   // console.log(keluarga);
@@ -102,43 +125,10 @@ function CalonPenerima() {
                 </Col>
                 <Col></Col>
                 <Col md="end">
-                  <ButtonGroup>
-                    <DropdownButton
-                      variant="primary"
-                      as={ButtonGroup}
-                      onClick={fetchData}
-                      title="Silahkan Proses Data"
-                      id="bg-nested-dropdown"
-                    >
-                      <Dropdown.Item eventKey="1">Semua Daerah</Dropdown.Item>
-                      {daerah.map((test, index) => (
-                        <Dropdown.Item eventKey={index}>
-                          {test.nama_daerah}
-                        </Dropdown.Item>
-                      ))}
-                    </DropdownButton>
-                    {/* <Crop169 />
-                    <Crop169 />
-                    <Crop169 />
-                    <Crop169 />
-                    <Crop169 />
-                    <Crop169 />
-                    <Crop169 /> */}
-                    <DropdownButton
-                      variant="secondary"
-                      as={ButtonGroup}
-                      onClick={fetchData}
-                      title="Download Export Excel"
-                      id="bg-nested-dropdown"
-                    >
-                      <Dropdown.Item eventKey="1">Semua Daerah</Dropdown.Item>
-                      {daerah.map((test, index) => (
-                        <Dropdown.Item eventKey={index}>
-                          {test.nama_daerah}
-                        </Dropdown.Item>
-                      ))}
-                    </DropdownButton>
-                  </ButtonGroup>
+                  <Button variant="primary" onClick={handleShow}>
+                    Silahkan Proses Data
+                  </Button>{" "}
+                  <Button variant="secondary" onClick={Excel}>Silahkan Export Excel</Button>
                 </Col>
               </Row>
               <br />
@@ -149,7 +139,7 @@ function CalonPenerima() {
                     <th>Code</th>
                     <th>Nama Kriteria</th>
                     <th>Bobot</th>
-                    <th>Atribut</th>
+                    <th>Nilai</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -166,7 +156,7 @@ function CalonPenerima() {
                           variant="outline-info"
                           as={Link}
                           to={`/kriteria?id=${test.id}`}
-                          onClick={fetchData}
+                          // onClick={fetchData}
                         >
                           <InfoOutlined />
                         </Button>{" "}
@@ -174,7 +164,7 @@ function CalonPenerima() {
                           variant="outline-danger"
                           as={Link}
                           to={`/kriteria?id=${test.id}`}
-                          onClick={fetchData}
+                          // onClick={fetchData}
                         >
                           <DeleteOutline />
                         </Button>
@@ -183,6 +173,42 @@ function CalonPenerima() {
                   ))}
                 </tbody>
               </table>
+              <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Filter Proses Data Penerima</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Form onSubmit={handleClose}>
+                  <Form.Group
+                      className="mb-3"
+                      controlId="exampleForm.ControlInput1"
+                    >
+                      <Form.Label>Daerah</Form.Label>
+                      <br />
+                      <Form.Select
+                        aria-label="Default select example"
+                        size="lg"
+                        onChange={(e) => setId_daerah(e.target.value)}
+                      >
+                        <option value={'null'}>
+                          Semua Daerah
+                        </option>
+                        {daerah.map((gg) => (
+                          <option value={gg.id}>{gg.nama_daerah}</option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>           
+                  </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={handleClose}>
+                    Close
+                  </Button>
+                  <Button type="submit" variant="primary" onClick={Proses}>
+                    Submit
+                  </Button>
+                </Modal.Footer>
+              </Modal>
             </div>
           </div>
         </section>

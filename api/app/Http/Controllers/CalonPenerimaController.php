@@ -66,14 +66,14 @@ class CalonPenerimaController extends Controller
      */
     public function store(Request $request)
     {
-        if($request->id_daerahs){
+        if($request->id_daerahs == 'null'){
+            $mainData = KepalaKeluarga::select('id','bobot')->orderBy('id' , 'ASC')->get();
+        }else{
             $mainData = KepalaKeluarga::select('kepala_keluargas.id','kepala_keluargas.bobot')
                     ->join('Daerahs','daerahs.id', '=' , 'kepala_keluargas.id_daerahs')
                     ->where('daerahs.id', $request->id_daerahs)
                     ->orderBy('id', 'ASC')
                     ->get();
-        }else{
-            $mainData = KepalaKeluarga::select('id','bobot')->orderBy('id' , 'ASC')->get();
         }
         
 
@@ -158,7 +158,7 @@ class CalonPenerimaController extends Controller
 
     public function excel(Request $request)
     {
-        return Excel::download(new CalonPenerimaExport($request->periode , $request->id_daerahs), 'calonPenerima.xlsx');
+        return Excel::download(new CalonPenerimaExport($request->id_daerahs), 'calonPenerima.xlsx');
     }
 
     /**
