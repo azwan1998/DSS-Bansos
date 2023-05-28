@@ -4,23 +4,22 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
-import {
-  DeleteOutline,
-  InfoOutlined,
-} from "@material-ui/icons";
+import { DeleteOutline, InfoOutlined } from "@material-ui/icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import fileDownload from 'js-file-download';
+import fileDownload from "js-file-download";
+import Loading from "../../components/loading/Loading";
 
 function CalonPenerima() {
   const [CalonPenerima, setCalonPenerima] = useState([]);
   const [daerah, setDaerah] = useState([]);
-  const [id_daerahs,setId_daerah] = useState();
+  const [id_daerahs, setId_daerah] = useState();
   const history = useNavigate();
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [loading, setLoading] = useState(false);
 
   //token
   const token = localStorage.getItem("token");
@@ -42,7 +41,7 @@ function CalonPenerima() {
     await axios.get("http://127.0.0.1:8000/api/daerah").then((response) => {
       //set response user to state
       setDaerah(response.data.data);
-        // console.log(response.data.data);
+      // console.log(response.data.data);
     });
   };
 
@@ -50,24 +49,33 @@ function CalonPenerima() {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     //fetch user from Rest API
     console.log(id_daerahs);
-    await axios.post(`http://127.0.0.1:8000/api/penerima/store?id_daerahs=${id_daerahs}`).then((response) => {
-      //set response user to state
-      // setCalonPenerima(response.data);
-      handleClose();
-      fetchData();
+    await axios
+      .post(`http://127.0.0.1:8000/api/penerima/store?id_daerahs=${id_daerahs}`)
+      .then((response) => {
+        //set response user to state
+        // setCalonPenerima(response.data);
+        handleClose();
+        setLoading(true);
+        setTimeout(() => {
+          setLoading(false);
+          // Lakukan tindakan setelah login berhasil
+          fetchData();
+        }, 3000);
         // console.log(response.data.data);
-    },[]);
+      }, []);
   };
 
   const Excel = async () => {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     //fetch user from Rest API
-    await axios.get(`http://127.0.0.1:8000/api/penerima/excel`,{responseType: 'blob',}).then((response) => {
-      //set response user to state
-      // setCalonPenerima(response.data);
-      fileDownload(response.data, 'calonPenerima.xlsx');
+    await axios
+      .get(`http://127.0.0.1:8000/api/penerima/excel`, { responseType: "blob" })
+      .then((response) => {
+        //set response user to state
+        // setCalonPenerima(response.data);
+        fileDownload(response.data, "calonPenerima.xlsx");
         // console.log(response.data.data);
-    },[]);
+      }, []);
   };
 
   // console.log(keluarga);
@@ -128,7 +136,9 @@ function CalonPenerima() {
                   <Button variant="primary" onClick={handleShow}>
                     Silahkan Proses Data
                   </Button>{" "}
-                  <Button variant="secondary" onClick={Excel}>Silahkan Export Excel</Button>
+                  <Button variant="secondary" onClick={Excel}>
+                    Silahkan Export Excel
+                  </Button>
                 </Col>
               </Row>
               <br />
@@ -144,33 +154,39 @@ function CalonPenerima() {
                   </tr>
                 </thead>
                 <tbody>
-                  {CalonPenerima.map((test, index) => (
-                    <tr key={test.id}>
-                      <td>{test.id}</td>
-                      <td>{test.nama}</td>
-                      <td>{test.NIK}</td>
-                      <td>{test.kecamatan}</td>
-                      <td>{test.nilai}</td>
-                      <td>
-                        <Button
-                          variant="outline-info"
-                          as={Link}
-                          to={`/kriteria?id=${test.id}`}
-                          // onClick={fetchData}
-                        >
-                          <InfoOutlined />
-                        </Button>{" "}
-                        <Button
-                          variant="outline-danger"
-                          as={Link}
-                          to={`/kriteria?id=${test.id}`}
-                          // onClick={fetchData}
-                        >
-                          <DeleteOutline />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                  {loading ? (
+                    <div>
+                      <Loading />
+                    </div>
+                  ) : (
+                    CalonPenerima.map((test, index) => (
+                      <tr key={test.id}>
+                        <td>{test.id}</td>
+                        <td>{test.nama}</td>
+                        <td>{test.NIK}</td>
+                        <td>{test.kecamatan}</td>
+                        <td>{test.nilai}</td>
+                        <td>
+                          <Button
+                            variant="outline-info"
+                            as={Link}
+                            to={`/kriteria?id=${test.id}`}
+                            // onClick={fetchData}
+                          >
+                            <InfoOutlined />
+                          </Button>{" "}
+                          <Button
+                            variant="outline-danger"
+                            as={Link}
+                            to={`/kriteria?id=${test.id}`}
+                            // onClick={fetchData}
+                          >
+                            <DeleteOutline />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
               <Modal show={show} onHide={handleClose}>
@@ -179,7 +195,7 @@ function CalonPenerima() {
                 </Modal.Header>
                 <Modal.Body>
                   <Form onSubmit={handleClose}>
-                  <Form.Group
+                    <Form.Group
                       className="mb-3"
                       controlId="exampleForm.ControlInput1"
                     >
@@ -190,14 +206,12 @@ function CalonPenerima() {
                         size="lg"
                         onChange={(e) => setId_daerah(e.target.value)}
                       >
-                        <option value={'null'}>
-                          Semua Daerah
-                        </option>
+                        <option value={"null"}>Semua Daerah</option>
                         {daerah.map((gg) => (
                           <option value={gg.id}>{gg.nama_daerah}</option>
                         ))}
                       </Form.Select>
-                    </Form.Group>           
+                    </Form.Group>
                   </Form>
                 </Modal.Body>
                 <Modal.Footer>

@@ -30,25 +30,31 @@ function Dashboard() {
     //set axios header dengan type Authorization + Bearer token
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     //fetch user from Rest API
-    await axios.get("http://localhost:8000/api/kepala/count?kepala=true").then((response) => {
-      //set response user to state
-      setKepala(response.data);
-      // console.log(response.data);
-    });
+    await axios
+      .get("http://localhost:8000/api/kepala/count?kepala=true")
+      .then((response) => {
+        //set response user to state
+        setKepala(response.data);
+        // console.log(response.data);
+      });
 
-    await axios.get("http://localhost:8000/api/kepala/count?daerah=true").then((response) => {
-      //set response user to state
-      setKriteria(response.data);
-      // console.log(response.data);
-    });
+    await axios
+      .get("http://localhost:8000/api/kepala/count?daerah=true")
+      .then((response) => {
+        //set response user to state
+        setKriteria(response.data);
+        // console.log(response.data);
+      });
 
-    await axios.get("http://localhost:8000/api/kepala/count").then((response) => {
-      //set response user to state
-      setDaerah(response.data);
-      // console.log(response.data);
-    });
+    await axios
+      .get("http://localhost:8000/api/kepala/count")
+      .then((response) => {
+        //set response user to state
+        setDaerah(response.data);
+        // console.log(response.data);
+      });
   };
-  
+
   useEffect(() => {
     //check token empty
     if (!token) {
@@ -57,8 +63,9 @@ function Dashboard() {
     }
 
     //call function "fetchData"
-    getKepala();
-    fetchData();
+      getKepala();
+      fetchData();
+
   }, []);
   return (
     <div>
@@ -89,58 +96,56 @@ function Dashboard() {
           <div className="card">
             <div className="card-body">
               <div className="container-fluid">
-                <div className="row">
-                  <div className="col-lg-3 col-6">
-                    <div className="small-box bg-info">
-                      <div className="inner">
-                      <h3>{kepala}</h3>
-                        <p>Data Kepala Keluarga</p>
+                  <div className="row">
+                    <div className="col-lg-3 col-6">
+                      <div className="small-box bg-info">
+                        <div className="inner">
+                          <h3>{kepala}</h3>
+                          <p>Data Kepala Keluarga</p>
+                        </div>
+                        <div className="icon">
+                          <i className="ion ion-bag" />
+                        </div>
+                        <a href="/family" className="small-box-footer">
+                          More info <i className="fas fa-arrow-circle-right" />
+                        </a>
                       </div>
-                      <div className="icon">
-                        <i className="ion ion-bag" />
-                      </div>
-                      <a href="/family" className="small-box-footer">
-                        More info <i className="fas fa-arrow-circle-right" />
-                      </a>
                     </div>
-                  </div>
-                  <div className="col-lg-3 col-6">
-                    <div className="small-box bg-success">
-                      <div className="inner">
-                        <h3>
-                        <h3>{kriteria}</h3>
-                        </h3>
-                        <p>Data Kriteria</p>
+                    <div className="col-lg-3 col-6">
+                      <div className="small-box bg-success">
+                        <div className="inner">
+                          <h3>
+                            <h3>{kriteria}</h3>
+                          </h3>
+                          <p>Data Kriteria</p>
+                        </div>
+                        <div className="icon">
+                          <i className="ion ion-stats-bars" />
+                        </div>
+                        <a href="/kriteria" className="small-box-footer">
+                          More info <i className="fas fa-arrow-circle-right" />
+                        </a>
                       </div>
-                      <div className="icon">
-                        <i className="ion ion-stats-bars" />
-                      </div>
-                      <a href="/kriteria" className="small-box-footer">
-                        More info <i className="fas fa-arrow-circle-right" />
-                      </a>
                     </div>
-                  </div>
-                  <div className="col-lg-3 col-6">
-                    <div className="small-box bg-warning">
-                      <div className="inner">
-                        <h3>{daerah}</h3>
-                        <p>Data Daerah</p>
+                    <div className="col-lg-3 col-6">
+                      <div className="small-box bg-warning">
+                        <div className="inner">
+                          <h3>{daerah}</h3>
+                          <p>Data Daerah</p>
+                        </div>
+                        <div className="icon">
+                          <i className="ion ion-person-add" />
+                        </div>
+                        <a href="/daerah" className="small-box-footer">
+                          More info <i className="fas fa-arrow-circle-right" />
+                        </a>
                       </div>
-                      <div className="icon">
-                        <i className="ion ion-person-add" />
-                      </div>
-                      <a href="/daerah" className="small-box-footer">
-                        More info <i className="fas fa-arrow-circle-right" />
-                      </a>
                     </div>
+                    <div></div>
                   </div>
-                  <div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
-          
         </section>
       </div>
     </div>

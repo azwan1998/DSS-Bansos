@@ -7,6 +7,7 @@ import Modal from "react-bootstrap/Modal";
 import { DeleteOutline, EditOutlined, InfoOutlined } from "@material-ui/icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Swal from "sweetalert2";
 
 function Daerah() {
   const [daerah, setDaerah] = useState([]);
@@ -32,24 +33,53 @@ function Daerah() {
   const handleShow2 = () => setShow2(true);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    Swal.fire({
+      title: "Konfirmasi Form",
+      text: "Apakah Data yang Anda Input sudah Benar?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Iya",
+      cancelButtonText: "Tidak",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Panggil API untuk melakukan logout
+        e.preventDefault();
 
-    const formData = new FormData();
+        const formData = new FormData();
+    
+        formData.append("nama_daerah", kecamatan1);
 
-    formData.append("nama_daerah", kecamatan1);
-
-    await axios
-      .post("http://127.0.0.1:8000/api/daerah/store", formData)
-      .then((response) => {
-        setShow(false);
-        //redirect to dashboard
-        fetchData();
-      })
-      .catch((error) => {
-        //assign error to state "validation"
-        setValidation(error.response.data.errors);
-        // console.log(error.response.data);
-      });
+        axios
+        .post("http://127.0.0.1:8000/api/daerah/store", formData)
+        .then((response) => {
+           if ((response, 201)) {
+              fetchData();
+              localStorage.removeItem("token", token);
+              // Swal.fire('Berhasil!', 'Anda berhasil keluar.', 'success');
+              history('/login')
+            } else {
+              // Logout gagal
+              Swal.fire(
+                "Gagal",
+                "Terjadi kesalahan saat melakukan mengiput data.",
+                "error"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            // Logout gagal karena terjadi kesalahan
+            Swal.fire(
+              "Gagal",
+              "Terjadi kesalahan saat melakukan saat menginput data.",
+              "error"
+            );
+          });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Batal logout
+        Swal.fire("Batal", "Input data dibatalkan.", "info");
+      }
+    });
   };
 
   const ShowKriteria = async () => {
