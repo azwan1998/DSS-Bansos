@@ -8,6 +8,7 @@ import { DeleteOutline, EditOutlined, InfoOutlined } from "@material-ui/icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Swal from "sweetalert2";
+import Search from "../../components/searching/Searching";
 
 function Daerah() {
   const [daerah, setDaerah] = useState([]);
@@ -20,6 +21,7 @@ function Daerah() {
   const [create, setCreate] = useState("");
   const [update, setUpdate] = useState("");
   const [validation, setValidation] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [id, setId] = useSearchParams();
   id.get("id");
   const param = id.get("id");
@@ -54,9 +56,6 @@ function Daerah() {
         .then((response) => {
            if ((response, 201)) {
               fetchData();
-              localStorage.removeItem("token", token);
-              // Swal.fire('Berhasil!', 'Anda berhasil keluar.', 'success');
-              history('/login')
             } else {
               // Logout gagal
               Swal.fire(
@@ -157,9 +156,31 @@ function Daerah() {
       history("/login");
     }
 
+    const Searching = async () => {
+      try {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        //fetch user from Rest API
+        await axios
+          .get(`http://127.0.0.1:8000/api/daerah/?Searching=${searchTerm}`)
+          .then((response) => {
+            //set response user to state
+            setDaerah(response.data.data);
+            console.log(response.data.data);
+          });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    Searching();
+
     //call function "fetchData"
-    fetchData();
-  }, []);
+    // fetchData();
+  }, [searchTerm]);
+
+  const handleSearch = (searchTerm) => {
+    setSearchTerm(searchTerm);
+  };
   return (
     <div>
       {/* Content Wrapper. Contains page content */}
@@ -193,10 +214,7 @@ function Daerah() {
               <>
                 <Row>
                   <Col>
-                    <Form.Control
-                      className="me-auto"
-                      placeholder="Searching. . . . "
-                    />
+                    <Search handleSearch={handleSearch} />
                   </Col>
                   <Col></Col>
                   <Col md="end">

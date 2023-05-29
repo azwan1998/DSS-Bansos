@@ -9,12 +9,15 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import fileDownload from "js-file-download";
 import Loading from "../../components/loading/Loading";
+import Search from "../../components/searching/Searching";
 
 function CalonPenerima() {
   const [CalonPenerima, setCalonPenerima] = useState([]);
   const [daerah, setDaerah] = useState([]);
   const [id_daerahs, setId_daerah] = useState();
   const history = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -88,9 +91,32 @@ function CalonPenerima() {
 
     getDaerah();
 
+
+    const Searching = async () => {
+      try {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        //fetch user from Rest API
+        await axios
+          .get(`http://127.0.0.1:8000/api/penerima/?Searching=${searchTerm}`)
+          .then((response) => {
+            //set response user to state
+            setCalonPenerima(response.data);
+            // console.log(response.data);
+          });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    Searching();
+
     //call function "fetchData"
-    fetchData();
-  }, []);
+    // fetchData();
+  }, [searchTerm]);
+
+  const handleSearch = (searchTerm) => {
+    setSearchTerm(searchTerm);
+  };
   return (
     <div>
       {/* Content Wrapper. Contains page content */}
@@ -126,10 +152,8 @@ function CalonPenerima() {
               {/* modal input data */}
               <Row>
                 <Col>
-                  <Form.Control
-                    className="me-auto"
-                    placeholder="Searching. . . . "
-                  />
+                <Search handleSearch={handleSearch} />
+
                 </Col>
                 <Col></Col>
                 <Col md="end">

@@ -24,9 +24,14 @@ class KriteriaController extends Controller
     {
         if($request->list){
             $kriteria = Kriteria::where('list' , true)->where('isDeleted', false)->get();
+        }else if($request->Searching){
+            $kriteria = Kriteria::where('isDeleted', false)
+                    ->where('nama_kriteria','LIKE','%'.$request->Searching.'%')
+                    ->get();
         }else{
             $kriteria = Kriteria::where('isDeleted', false)->paginate(10);
         }
+        
     
         return response(KriteriaResource::collection($kriteria));
     }

@@ -46,6 +46,16 @@ class CalonPenerimaController extends Controller
                 ->where('daerahs.id', $request->id_daerahs)
                 ->orderBy('calon_penerimas.nilai', 'DESC')
                 ->get();
+        }else if($request->Searching){
+            // print_r('tsgdahsh');exit;
+            $calon = Penerima::select('calon_penerimas.*','kepala_keluargas.nama','kepala_keluargas.NIK','daerahs.nama_daerah')
+                ->join('Kepala_keluargas','kepala_keluargas.id','=','calon_penerimas.id_kepala_keluargas')
+                ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
+                ->where('calon_penerimas.periode', $newPeriode->periode)
+                ->where('kepala_keluargas.nama','LIKE','%'.$request->Searching.'%')
+                ->orWhere('kepala_keluargas.NIK','LIKE','%'.$request->Searching.'%')
+                // ->orderBy('calon_penerimas.nilai', 'DESC')
+                ->get();
         }else{
             $calon = Penerima::select('calon_penerimas.*','kepala_keluargas.nama','kepala_keluargas.NIK','daerahs.nama_daerah')
                 ->join('Kepala_keluargas','kepala_keluargas.id','=','calon_penerimas.id_kepala_keluargas')
@@ -54,6 +64,7 @@ class CalonPenerimaController extends Controller
                 ->orderBy('calon_penerimas.nilai', 'DESC')
                 ->get();
         }
+        
         
         return response(CalonPenerimaResource::collection($calon));
     }

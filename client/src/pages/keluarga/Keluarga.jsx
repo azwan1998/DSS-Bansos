@@ -4,14 +4,11 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
-import {
-  DeleteOutline,
-  EditOutlined,
-  InfoOutlined,
-} from "@material-ui/icons";
+import { DeleteOutline, EditOutlined, InfoOutlined } from "@material-ui/icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import fileDownload from 'js-file-download';
+import fileDownload from "js-file-download";
+import Search from "../../components/searching/Searching";
 
 function Keluarga({ index, item }) {
   //
@@ -19,6 +16,7 @@ function Keluarga({ index, item }) {
   const [daerah, setDaerah] = useState([]);
   const [kriteria, setKriteria] = useState([]);
   const history = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [nama, setNama] = useState("");
   const [NIK, setNIK] = useState("");
@@ -27,7 +25,7 @@ function Keluarga({ index, item }) {
   const [alamat, setAlamat] = useState("");
   const [id_daerahs, setId_daerah] = useState("");
   const [bobot, setBobot] = useState([]);
-  
+
   //
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -40,53 +38,33 @@ function Keluarga({ index, item }) {
   //token
   const token = localStorage.getItem("token");
 
-  // const looping = async () => {
-  //   {bobot.map((bb) => (
-  //     {bb}
-  //   ))}
-  // }
-  
-  // console.log(token);
   const handleSubmit = async (e) => {
-
     e.preventDefault();
-
-    // const bobotReal = [];
-
-    // const tt = [];
-
-    // looping();
-
-    // {bobot.map((test, index) => (
-
-    // ))}
-
 
     const formData = new FormData();
 
-    // formData.append("code", code);
     formData.append("nama", nama);
     formData.append("NIK", NIK);
     formData.append("tanggal_lahir", tanggal_lahir);
     formData.append("jenis_kelamin", jenis_kelamin);
     formData.append("id_daerahs", id_daerahs);
     formData.append("alamat", alamat);
-    formData.append("bobot", bobot)
+    formData.append("bobot", bobot);
 
     await axios
       .post("http://127.0.0.1:8000/api/kepala/store", formData)
       .then((response) => {
         setShow(false);
-        //redirect to dashboard
-        fetchData()
 
-        console.log(bobot);
+        fetchData();
+
+        // console.log(bobot);
       });
-      // .catch((error) => {
-      //   //assign error to state "validation"
-      //   setValidation(error.response.data.errors);
-      //   // console.log(error.response.data);
-      // });
+    // .catch((error) => {
+    //   //assign error to state "validation"
+    //   setValidation(error.response.data.errors);
+    //   // console.log(error.response.data);
+    // });
   };
   const fetchData = async () => {
     //set axios header dengan type Authorization + Bearer token
@@ -103,34 +81,38 @@ function Keluarga({ index, item }) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     //fetch user from Rest API
     console.log(id_daerahs);
-    await axios.get(`http://127.0.0.1:8000/api/kepala/excel?id_daerahs=${id_daerahs}`,{responseType: 'blob',}).then((response) => {
-      //set response user to state
-      // setCalonPenerima(response.data);
-      fileDownload(response.data, 'KepalaKeluarga.xlsx');
+    await axios
+      .get(`http://127.0.0.1:8000/api/kepala/excel?id_daerahs=${id_daerahs}`, {
+        responseType: "blob",
+      })
+      .then((response) => {
+        //set response user to state
+        // setCalonPenerima(response.data);
+        fileDownload(response.data, "KepalaKeluarga.xlsx");
         // console.log(response.data.data);
-    },[]);
-  }
+      }, []);
+  };
 
   const dataDaerah = async () => {
-
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     //fetch user from Rest API
     await axios.get("http://127.0.0.1:8000/api/daerah/").then((response) => {
       //set response user to state
-      setDaerah(response.data.data);
+      setDaerah(response.data);
       // console.log(response.data.data);
     });
   };
 
   const Kriteria = async () => {
-
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     //fetch user from Rest API
-    await axios.get("http://127.0.0.1:8000/api/kriteria?list=true").then((response) => {
-      //set response user to state
-      setKriteria(response.data);
-      // console.log(response.data);
-    });
+    await axios
+      .get("http://127.0.0.1:8000/api/kriteria?list=true")
+      .then((response) => {
+        //set response user to state
+        setKriteria(response.data);
+        // console.log(response.data);
+      });
   };
   // console.log(keluarga);
   useEffect(() => {
@@ -140,6 +122,24 @@ function Keluarga({ index, item }) {
       history("/login");
     }
 
+    const Searching = async () => {
+      try {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        //fetch user from Rest API
+        await axios
+          .get(`http://127.0.0.1:8000/api/kepala/?Searching=${searchTerm}`)
+          .then((response) => {
+            //set response user to state
+            setKeluarga(response.data);
+            // console.log(response.data);
+          });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    Searching();
+
     //call function "fetchData"
     fetchData();
 
@@ -147,7 +147,12 @@ function Keluarga({ index, item }) {
     dataDaerah();
 
     Kriteria();
-  }, []);
+  }, [searchTerm]);
+
+  const handleSearch = (searchTerm) => {
+    setSearchTerm(searchTerm);
+  };
+
   return (
     <div>
       {/* Content Wrapper. Contains page content */}
@@ -178,17 +183,16 @@ function Keluarga({ index, item }) {
             <div className="card-body">
               <Row>
                 <Col>
-                  <Form.Control
-                    className="me-auto"
-                    placeholder="Searching. . . . "
-                  />
+                  <Search handleSearch={handleSearch} />
                 </Col>
                 <Col></Col>
                 <Col md="end">
                   <Button variant="primary" onClick={handleShow}>
                     Input Data Keluarga
                   </Button>{" "}
-                  <Button variant="secondary" onClick={handleShow1}>Export Excel</Button>
+                  <Button variant="secondary" onClick={handleShow1}>
+                    Export Excel
+                  </Button>
                 </Col>
               </Row>
               <br />
@@ -319,12 +323,11 @@ function Keluarga({ index, item }) {
                       controlId="exampleForm.ControlTextarea1"
                     >
                       <Form.Label>Alamat</Form.Label>
-                      <Form.Control 
-                      as="textarea" 
-                      rows={2} 
-                      onChange={(e) => setAlamat(e.target.value)}
+                      <Form.Control
+                        as="textarea"
+                        rows={2}
+                        onChange={(e) => setAlamat(e.target.value)}
                       />
-                      
                     </Form.Group>
 
                     <Form.Group
@@ -357,39 +360,41 @@ function Keluarga({ index, item }) {
                       />
                     </Form.Group>
 
-                    {kriteria.map((kk,index) => (
+                    {kriteria.map((kk, index) => (
                       <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlInput1"
-                      key={index}
-                    >
-                      <Form.Label>{kk.nama}</Form.Label>
-                      <br />
-                      <Form.Select
-                        aria-label="Default select example"
-                        size="lg"
-                        onChange={(e) => setBobot(e.target.value)}
-                        // onChange={handleChange}
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                        key={index}
                       >
-                        <option>
-                          - - - - - - - - - - - - - - - SILAHKAN PILIH - - - - -
-                          - - - - - - - - - -
-                        </option>
-                        {kk.subKriteria.map((jj) => (
-                          <option value={jj.nilai}>{jj.nama}</option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
+                        <Form.Label>{kk.nama}</Form.Label>
+                        <br />
+                        <Form.Select
+                          aria-label="Default select example"
+                          size="lg"
+                          onChange={(e) => setBobot(e.target.value)}
+                          // onChange={handleChange}
+                        >
+                          <option>
+                            - - - - - - - - - - - - - - - SILAHKAN PILIH - - - -
+                            - - - - - - - - - - -
+                          </option>
+                          {kk.subKriteria.map((jj) => (
+                            <option value={jj.nilai}>{jj.nama}</option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
                     ))}
-
-                    
                   </Form>
                 </Modal.Body>
                 <Modal.Footer>
                   <Button variant="secondary" onClick={handleClose}>
                     Close
                   </Button>
-                  <Button type="submit" variant="primary" onClick={handleSubmit}>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    onClick={handleSubmit}
+                  >
                     Submit
                   </Button>
                 </Modal.Footer>
@@ -400,7 +405,7 @@ function Keluarga({ index, item }) {
                 </Modal.Header>
                 <Modal.Body>
                   <Form onSubmit={handleClose1}>
-                  <Form.Group
+                    <Form.Group
                       className="mb-3"
                       controlId="exampleForm.ControlInput1"
                     >
@@ -411,12 +416,12 @@ function Keluarga({ index, item }) {
                         size="lg"
                         onChange={(e) => setId_daerah(e.target.value)}
                       >
-                        <option value={'null'}>Semua Daerah</option>
+                        <option value={"null"}>Semua Daerah</option>
                         {daerah.map((gg) => (
                           <option value={gg.id}>{gg.nama_daerah}</option>
                         ))}
                       </Form.Select>
-                    </Form.Group>           
+                    </Form.Group>
                   </Form>
                 </Modal.Body>
                 <Modal.Footer>

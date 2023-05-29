@@ -24,11 +24,20 @@ class KepalaKelController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $kepala = KepalaKeluarga::select('kepala_keluargas.*','daerahs.nama_daerah')
-        ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
-        ->paginate(10);
+        if($request->Searching){
+            $kepala = KepalaKeluarga::select('kepala_keluargas.*','daerahs.nama_daerah')
+                ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
+                ->where('kepala_keluargas.nama','LIKE','%'.$request->Searching.'%')
+                ->orWhere('daerahs.nama_daerah','LIKE','%'.$request->Searching.'%')
+                ->get();
+        }else{
+            $kepala = KepalaKeluarga::select('kepala_keluargas.*','daerahs.nama_daerah')
+                ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
+                ->paginate(10);
+        }
+        
 
         return response(KeluargaResource::collection($kepala));
     }

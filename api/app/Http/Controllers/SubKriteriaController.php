@@ -17,12 +17,21 @@ class SubKriteriaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $sub = SubKriteria::select('sub_kriterias.*','kriterias.nama_kriteria','kriterias.code')
-        ->join('Kriterias','kriterias.id','=','sub_kriterias.id_kriterias')
-        ->where('kriterias.isDeleted', false)
-        ->paginate(10);
+        if($request->Searching){
+            $sub = SubKriteria::select('sub_kriterias.*','kriterias.nama_kriteria','kriterias.code')
+                ->join('Kriterias','kriterias.id','=','sub_kriterias.id_kriterias')
+                ->where('kriterias.isDeleted', false)
+                ->where('sub_kriterias.nama','LIKE','%'.$request->Searching.'%')
+                ->paginate(10);
+        }else{
+            $sub = SubKriteria::select('sub_kriterias.*','kriterias.nama_kriteria','kriterias.code')
+                ->join('Kriterias','kriterias.id','=','sub_kriterias.id_kriterias')
+                ->where('kriterias.isDeleted', false)
+                ->paginate(10);
+        }
+        
 
         return response()->json([
             'data' => $sub

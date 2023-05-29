@@ -7,6 +7,8 @@ import Modal from "react-bootstrap/Modal";
 import { DeleteOutline, EditOutlined, InfoOutlined } from "@material-ui/icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Search from "../../components/searching/Searching";
+
 
 function SubKriteria() {
   const [subKriteria, setSubKriteria] = useState([]);
@@ -22,6 +24,8 @@ function SubKriteria() {
   const [list, setList] = useState([]);
   id.get("id");
   const param = id.get("id");
+  const [searchTerm, setSearchTerm] = useState("");
+
   // console.log(param);
 
   const handleClose = () => setShow(false);
@@ -139,13 +143,34 @@ function SubKriteria() {
       //redirect login page
       history("/login");
     }
+    const Searching = async () => {
+      try {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        //fetch user from Rest API
+        await axios
+          .get(`http://127.0.0.1:8000/api/subkriteria/?Searching=${searchTerm}`)
+          .then((response) => {
+            //set response user to state
+            setSubKriteria(response.data.data.data);
+            // console.log(response.data.data.data);
+          });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    Searching();
 
     //call function "fetchData"
-    fetchData();
+    // fetchData();
 
     //call list
     List();
-  }, []);
+  }, [searchTerm]);
+
+  const handleSearch = (searchTerm) => {
+    setSearchTerm(searchTerm);
+  };
   return (
     <div>
       {/* Content Wrapper. Contains page content */}
@@ -177,10 +202,7 @@ function SubKriteria() {
               <>
                 <Row>
                   <Col>
-                    <Form.Control
-                      className="me-auto"
-                      placeholder="Searching. . . . "
-                    />
+                  <Search handleSearch={handleSearch} />
                   </Col>
                   <Col></Col>
                   <Col md="end">

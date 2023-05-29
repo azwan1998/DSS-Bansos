@@ -7,6 +7,7 @@ import Modal from "react-bootstrap/Modal";
 import { DeleteOutline, EditOutlined, InfoOutlined } from "@material-ui/icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Search from "../../components/searching/Searching";
 
 function Kriteria() {
   const [kriteria, setKriteria] = useState([]);
@@ -23,6 +24,7 @@ function Kriteria() {
   id.get("id");
   const param = id.get("id");
   console.log(param);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -135,9 +137,31 @@ function Kriteria() {
       history("/login");
     }
 
+    const Searching = async () => {
+      try {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        //fetch user from Rest API
+        await axios
+          .get(`http://127.0.0.1:8000/api/kriteria/?Searching=${searchTerm}`)
+          .then((response) => {
+            //set response user to state
+            setKriteria(response.data);
+            console.log(response.data);
+          });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    Searching();
+
     //call function "fetchData"
-    fetchData();
-  }, []);
+    // fetchData();
+  }, [searchTerm]);
+
+  const handleSearch = (searchTerm) => {
+    setSearchTerm(searchTerm);
+  };
   return (
     <div>
       {/* Content Wrapper. Contains page content */}
@@ -171,10 +195,7 @@ function Kriteria() {
               <>
                 <Row>
                   <Col>
-                    <Form.Control
-                      className="me-auto"
-                      placeholder="Searching. . . . "
-                    />
+                    <Search handleSearch={handleSearch} />
                   </Col>
                   <Col></Col>
                   <Col md="end">

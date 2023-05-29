@@ -19,9 +19,14 @@ class DaerahController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $daerah = Daerah::all();
+        if($request->Searching){
+            $daerah = Daerah::where('nama_daerah','LIKE','%'.$request->Searching.'%')->get();
+        }else{
+            $daerah = Daerah::all();
+        }
+        
 
         return response()->json([
             'data' => $daerah
