@@ -61,8 +61,8 @@ function SubKriteria() {
   const List = async () => {
     axios.get(`http://127.0.0.1:8000/api/kriteria/`).then((response) => {
       //set response user to state
-      setList(response.data.data.data);
-      console.log(response.data.data.data);
+      setList(response.data);
+      console.log(response.data);
     });
   };
 
@@ -232,13 +232,13 @@ function SubKriteria() {
                           value={kriteria}
                           onChange={(e) => setKriteria(e.target.value)}
                         >
-                          {list.map((test) => (
-                            <>
-                              <option value={test.id}>
-                                {test.nama_kriteria}
-                              </option>
-                            </>
-                          ))}
+                          <option>
+                          - - - - - - - - - - - - - - - SILAHKAN PILIH - - - - -
+                          - - - - - - - - - -
+                        </option>
+                        {list.map((gg) => (
+                          <option value={gg.id}>{gg.nama}</option>
+                        ))}
                         </Form.Select>
                       </Form.Group>
                       <Form.Group
