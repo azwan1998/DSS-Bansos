@@ -334,8 +334,8 @@ function Daerah() {
                   <tr>
                     <th>ID</th>
                     <th>Nama Daerah</th>
-                    <th>Updated At</th>
-                    <th>Created At</th>
+                    {/* <th>Updated At</th>
+                    <th>Created At</th> */}
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -344,8 +344,8 @@ function Daerah() {
                     <tr key={index.id}>
                       <td>{test.id}</td>
                       <td>{test.nama_daerah}</td>
-                      <td>{test.updated_at}</td>
-                      <td>{test.created_at}</td>
+                      {/* <td>{test.updated_at}</td>
+                      <td>{test.created_at}</td> */}
                       <td>
                         <Button
                           variant="outline-warning"

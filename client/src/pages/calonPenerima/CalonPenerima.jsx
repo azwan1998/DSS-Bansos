@@ -170,9 +170,9 @@ function CalonPenerima() {
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>Code</th>
-                    <th>Nama Kriteria</th>
-                    <th>Bobot</th>
+                    <th>Nama</th>
+                    <th>NIK</th>
+                    <th>Daerah</th>
                     <th>Nilai</th>
                     <th>Action</th>
                   </tr>
@@ -199,14 +199,14 @@ function CalonPenerima() {
                           >
                             <InfoOutlined />
                           </Button>{" "}
-                          <Button
+                          {/* <Button
                             variant="outline-danger"
                             as={Link}
                             to={`/kriteria?id=${test.id}`}
                             // onClick={fetchData}
                           >
                             <DeleteOutline />
-                          </Button>
+                          </Button> */}
                         </td>
                       </tr>
                     ))

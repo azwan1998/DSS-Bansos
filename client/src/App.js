@@ -88,9 +88,9 @@ function App(id) {
             }
           />
         </Routes>
-        <>
+        {/* <>
           <Footer />
-        </>
+        </> */}
       </Router>
     </div>
   );

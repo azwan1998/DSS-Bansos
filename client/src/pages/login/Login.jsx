@@ -131,7 +131,7 @@ function Login() {
                   <div className="input-group mb-3">
                     {/* /.col */}
                     <button type="submit" className="btn btn-primary btn-block">
-                      Sign In
+                      Login
                     </button>
                   </div>
                 </form>

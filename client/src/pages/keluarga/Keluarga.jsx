@@ -98,7 +98,7 @@ function Keluarga({ index, item }) {
     //fetch user from Rest API
     await axios.get("http://127.0.0.1:8000/api/daerah/").then((response) => {
       //set response user to state
-      setDaerah(response.data);
+      setDaerah(response.data.data);
       // console.log(response.data.data);
     });
   };
@@ -122,6 +122,10 @@ function Keluarga({ index, item }) {
       history("/login");
     }
 
+    dataDaerah();
+
+    Kriteria();
+
     const Searching = async () => {
       try {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -141,12 +145,10 @@ function Keluarga({ index, item }) {
     Searching();
 
     //call function "fetchData"
-    fetchData();
+    // fetchData();
 
     //call datadaerah
-    dataDaerah();
-
-    Kriteria();
+    
   }, [searchTerm]);
 
   const handleSearch = (searchTerm) => {
