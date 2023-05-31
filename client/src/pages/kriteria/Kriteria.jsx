@@ -447,7 +447,7 @@ function Kriteria() {
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    <th>No</th>
                     <th>Code</th>
                     <th>Nama Kriteria</th>
                     <th>Bobot</th>
@@ -458,7 +458,7 @@ function Kriteria() {
                 <tbody>
                   {kriteria.map((test, index) => (
                     <tr key={test.id}>
-                      <td>{test.id}</td>
+                      <td>{index+1}</td>
                       <td>{test.code}</td>
                       <td>{test.nama}</td>
                       <td>{test.bobot_kriteria}</td>

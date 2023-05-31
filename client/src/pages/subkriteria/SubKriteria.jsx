@@ -415,7 +415,7 @@ function SubKriteria() {
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    <th>No</th>
                     <th>Nama SubKriteria</th>
                     <th>Nama Kriteria</th>
                     <th>Nilai SubKriteria</th>
@@ -426,7 +426,7 @@ function SubKriteria() {
                 <tbody>
                   {subKriteria.map((test, index) => (
                     <tr key={test.id}>
-                      <td>{test.id}</td>
+                      <td>{index+1}</td>
                       <td>{test.nama}</td>
                       <td>{test.nama_kriteria}</td>
                       <td>{test.nilai}</td>

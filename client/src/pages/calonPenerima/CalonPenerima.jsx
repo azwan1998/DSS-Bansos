@@ -169,7 +169,7 @@ function CalonPenerima() {
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    <th>No</th>
                     <th>Nama</th>
                     <th>NIK</th>
                     <th>Daerah</th>
@@ -185,7 +185,7 @@ function CalonPenerima() {
                   ) : (
                     CalonPenerima.map((test, index) => (
                       <tr key={test.id}>
-                        <td>{test.id}</td>
+                        <td>{index+1}</td>
                         <td>{test.nama}</td>
                         <td>{test.NIK}</td>
                         <td>{test.kecamatan}</td>

@@ -332,7 +332,7 @@ function Daerah() {
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    <th>No</th>
                     <th>Nama Daerah</th>
                     {/* <th>Updated At</th>
                     <th>Created At</th> */}
@@ -342,7 +342,7 @@ function Daerah() {
                 <tbody>
                   {daerah.map((test, index) => (
                     <tr key={index.id}>
-                      <td>{test.id}</td>
+                      <td>{index+1}</td>
                       <td>{test.nama_daerah}</td>
                       {/* <td>{test.updated_at}</td>
                       <td>{test.created_at}</td> */}
