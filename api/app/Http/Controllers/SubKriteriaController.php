@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SubKriteria;
 use App\Models\Kriteria;
+use App\Http\Resources\SubKriteria as SubKriteriaResource;
 
 class SubKriteriaController extends Controller
 {
@@ -33,9 +34,8 @@ class SubKriteriaController extends Controller
         }
         
 
-        return response()->json([
-            'data' => $sub
-        ]);
+        return response(SubKriteriaResource::collection($sub));
+
     }
 
     /**
@@ -64,9 +64,7 @@ class SubKriteriaController extends Controller
 
         $sub = SubKriteria::create($request->all());
 
-        return response()->json([
-            'data' => $sub
-        ]);
+        return response(SubKriteriaResource::collection($sub));
     }
 
     /**

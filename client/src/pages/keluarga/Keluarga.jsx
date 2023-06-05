@@ -403,7 +403,7 @@ function Keluarga({ index, item }) {
               </Modal>
               <Modal show={show1} onHide={handleClose1}>
                 <Modal.Header closeButton>
-                  <Modal.Title>Filter Proses Data Penerima</Modal.Title>
+                  <Modal.Title>Filter Proses Data Keluarga</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                   <Form onSubmit={handleClose1}>

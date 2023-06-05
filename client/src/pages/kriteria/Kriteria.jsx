@@ -266,8 +266,8 @@ function Kriteria() {
                           onChange={(e) => setAtribut(e.target.value)}
                         >
                           <option>Select Atribut Kriteria</option>
-                          <option value="BENEFIT">BENEFIT</option>
-                          <option value="COST">COST</option>
+                          <option value="true">BENEFIT</option>
+                          <option value="false">COST</option>
                         </Form.Select>
                       </Form.Group>
                     </Form>
@@ -343,8 +343,8 @@ function Kriteria() {
                           onChange={(e) => setAtribut(e.target.value)}
                         >
                           <option>Select Atribut Kriteria</option>
-                          <option value="BENEFIT">BENEFIT</option>
-                          <option value="COST">COST</option>
+                          <option value="true">BENEFIT</option>
+                          <option value="false">COST</option>
                         </Form.Select>
                       </Form.Group>
                     </Form>

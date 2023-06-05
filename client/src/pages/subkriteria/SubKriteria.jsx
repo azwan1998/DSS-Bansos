@@ -62,7 +62,7 @@ function SubKriteria() {
     axios.get(`http://127.0.0.1:8000/api/kriteria/`).then((response) => {
       //set response user to state
       setList(response.data);
-      console.log(response.data);
+      // console.log(response.data);
     });
   };
 
@@ -143,6 +143,9 @@ function SubKriteria() {
       //redirect login page
       history("/login");
     }
+
+    // fetchData();
+
     const Searching = async () => {
       try {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -151,8 +154,8 @@ function SubKriteria() {
           .get(`http://127.0.0.1:8000/api/subkriteria/?Searching=${searchTerm}`)
           .then((response) => {
             //set response user to state
-            setSubKriteria(response.data.data.data);
-            // console.log(response.data.data.data);
+            setSubKriteria(response.data);
+            console.log(response.data);
           });
       } catch (error) {
         console.error("Error:", error);
@@ -160,9 +163,8 @@ function SubKriteria() {
     };
 
     Searching();
-
     //call function "fetchData"
-    // fetchData();
+    
 
     //call list
     List();
@@ -171,6 +173,8 @@ function SubKriteria() {
   const handleSearch = (searchTerm) => {
     setSearchTerm(searchTerm);
   };
+
+
   return (
     <div>
       {/* Content Wrapper. Contains page content */}
@@ -425,12 +429,12 @@ function SubKriteria() {
                 </thead>
                 <tbody>
                   {subKriteria.map((test, index) => (
-                    <tr key={test.id}>
+                    <tr key={index}>
                       <td>{index+1}</td>
                       <td>{test.nama}</td>
                       <td>{test.nama_kriteria}</td>
                       <td>{test.nilai}</td>
-                      <td>{test.code}</td>
+                      <td>{test.atribut}</td>
                       <td>
                         <Button
                           variant="outline-warning"

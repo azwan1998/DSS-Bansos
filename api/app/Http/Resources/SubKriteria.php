@@ -3,9 +3,9 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Models\SubKriteria;
+use App\Models\Kriteria;
 
-class Kriteria extends JsonResource
+class SubKriteria extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,15 +15,15 @@ class Kriteria extends JsonResource
      */
     public function toArray($request)
     {
-        $subKriteria = SubKriteria::where('id_kriterias', $this->id)->get();
+        $kriteria = Kriteria::select('nama_kriteria', 'atribut')->where('id', $this->id)->first();
+
 
         return  [
             'id' => $this->id,
-            'nama' => $this->nama_kriteria,
-            'bobot_kriteria' => $this->bobot_kriteria,
-            'atribut' => $this->atribut ? 'Benefit' : 'Cost',
-            'code' => $this->code,
-            'subKriteria' => $subKriteria
+            'nama' => $this->nama,
+            'nilai' => $this->nilai,
+            'nama_kriteria' => $kriteria->nama_kriteria;
+            'atribut' => $kriteria->atribut ? 'BENEFIT' : 'COST',
         ];
     }
 }
