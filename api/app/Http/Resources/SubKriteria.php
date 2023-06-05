@@ -22,7 +22,7 @@ class SubKriteria extends JsonResource
             'id' => $this->id,
             'nama' => $this->nama,
             'nilai' => $this->nilai,
-            'nama_kriteria' => $kriteria->nama_kriteria;
+            'nama_kriteria' => $kriteria->nama_kriteria,
             'atribut' => $kriteria->atribut ? 'BENEFIT' : 'COST',
         ];
     }
