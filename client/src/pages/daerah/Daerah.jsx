@@ -35,6 +35,7 @@ function Daerah() {
   const handleShow2 = () => setShow2(true);
 
   const handleSubmit = async (e) => {
+    handleClose();
     Swal.fire({
       title: "Konfirmasi Form",
       text: "Apakah Data yang Anda Input sudah Benar?",
@@ -49,7 +50,7 @@ function Daerah() {
 
         const formData = new FormData();
     
-        formData.append("nama_daerah", kecamatan1);
+        formData.append("nama_daerah", kecamatan);
 
         axios
         .post("http://127.0.0.1:8000/api/daerah/store", formData)
@@ -94,12 +95,15 @@ function Daerah() {
       });
   };
 
-  const HandleDelete = async () => {
-    await axios
-      .post(`http://127.0.0.1:8000/api/daerah/delete/${param}`)
-      .then((response) => {
+  const handleDelete = (id) => {
+    axios
+      .post(`http://127.0.0.1:8000/api/daerah/delete/${id}`)
+      .then(() => {
+        setDaerah(daerah.filter((row) => row.id !== id));
         fetchData();
-        // console.log(response.data.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
 
@@ -116,23 +120,52 @@ function Daerah() {
       });
   };
   const handleEdit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
+    handleClose1();
+    Swal.fire({
+      title: "Konfirmasi Form",
+      text: "Apakah Data yang Anda Input sudah Benar?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Iya",
+      cancelButtonText: "Tidak",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Panggil API untuk melakukan logout
+        e.preventDefault();
 
-    formData.append("nama_daerah", kecamatan);
+        const formData = new FormData();
+    
+        formData.append("nama_daerah", kecamatan);
 
-    await axios
-      .post(`http://127.0.0.1:8000/api/daerah/update/${param}`, formData)
-      .then((response) => {
-        setShow1(false);
-        //redirect to dashboard
-        fetchData();
-      })
-      .catch((error) => {
-        //assign error to state "validation"
-        setValidation(error.response.data.errors);
-        // console.log(error.response.data);
-      });
+        axios
+        .post(`http://127.0.0.1:8000/api/daerah/update/${param}`, formData)
+        .then((response) => {
+           if ((response, 201)) {
+              fetchData();
+            } else {
+              // Logout gagal
+              Swal.fire(
+                "Gagal",
+                "Terjadi kesalahan saat melakukan mengiput data.",
+                "error"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            // Logout gagal karena terjadi kesalahan
+            Swal.fire(
+              "Gagal",
+              "Terjadi kesalahan saat melakukan saat menginput data.",
+              "error"
+            );
+          });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Batal logout
+        Swal.fire("Batal", "Input data dibatalkan.", "info");
+      }
+    });
+
   };
 
   //token
@@ -239,9 +272,9 @@ function Daerah() {
                         <Form.Label>Nama Kecamatan</Form.Label>
                         <Form.Control
                           type="text"
-                          placeholder="C2"
+                          placeholder="masukkan nama kecamatan"
                           autoFocus
-                          value={kecamatan1}
+                          // value={kecamatan1}
                           onChange={(e) => setKecamatan1(e.target.value)}
                         />
                       </Form.Group>
@@ -254,7 +287,7 @@ function Daerah() {
                     <Button
                       type="submit"
                       variant="primary"
-                      onClick={handleClose && handleSubmit}
+                      onClick={handleSubmit}
                     >
                       Submit
                     </Button>
@@ -276,7 +309,7 @@ function Daerah() {
                         <Form.Label>Nama Kecamatan</Form.Label>
                         <Form.Control
                           type="text"
-                          placeholder="C2"
+                          placeholder="masukkan nama kecamatan"
                           autoFocus
                           value={kecamatan}
                           onChange={(e) => setKecamatan(e.target.value)}
@@ -291,7 +324,7 @@ function Daerah() {
                     <Button
                       type="submit"
                       variant="primary"
-                      onClick={handleClose1 && handleEdit}
+                      onClick={handleEdit}
                     >
                       Submit
                     </Button>
@@ -365,9 +398,7 @@ function Daerah() {
                         </Button>{" "}
                         <Button
                           variant="outline-danger"
-                          as={Link}
-                          to={`/daerah?id=${test.id}`}
-                          onClick={HandleDelete}
+                          onClick={() => handleDelete(test.id)}
                         >
                           <DeleteOutline />
                         </Button>

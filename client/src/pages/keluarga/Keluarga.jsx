@@ -114,6 +114,18 @@ function Keluarga({ index, item }) {
         // console.log(response.data);
       });
   };
+
+  const handleDelete = (id) => {
+    axios
+      .post(`http://127.0.0.1:8000/api/kepala/delete/${id}`)
+      .then(() => {
+        setKeluarga(keluarga.filter((row) => row.id !== id));
+        fetchData();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   // console.log(keluarga);
   useEffect(() => {
     //check token empty
@@ -222,7 +234,10 @@ function Keluarga({ index, item }) {
                         <Button variant="outline-info">
                           <InfoOutlined />
                         </Button>{" "}
-                        <Button variant="outline-danger">
+                        <Button 
+                          variant="outline-danger"
+                          onClick={() => handleDelete(test.id)}
+                        >
                           <DeleteOutline />
                         </Button>
                       </td>

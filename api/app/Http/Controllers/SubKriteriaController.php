@@ -21,15 +21,17 @@ class SubKriteriaController extends Controller
     public function index(Request $request)
     {
         if($request->Searching){
-            $sub = SubKriteria::select('sub_kriterias.*','kriterias.nama_kriteria','kriterias.code')
+            $sub = SubKriteria::select('sub_kriterias.*','kriterias.nama_kriteria','kriterias.code','kriterias.id AS id_kriterias')
                 ->join('Kriterias','kriterias.id','=','sub_kriterias.id_kriterias')
                 ->where('kriterias.isDeleted', false)
                 ->where('sub_kriterias.nama','LIKE','%'.$request->Searching.'%')
+                ->orderBy('sub_kriterias.id', 'DESC')
                 ->paginate(10);
         }else{
             $sub = SubKriteria::select('sub_kriterias.*','kriterias.nama_kriteria','kriterias.code')
                 ->join('Kriterias','kriterias.id','=','sub_kriterias.id_kriterias')
                 ->where('kriterias.isDeleted', false)
+                ->orderBy('sub_kriterias.id', 'DESC')
                 ->paginate(10);
         }
         
@@ -64,7 +66,9 @@ class SubKriteriaController extends Controller
 
         $sub = SubKriteria::create($request->all());
 
-        return response(SubKriteriaResource::collection($sub));
+        return response()->json([
+            'data' => $sub
+        ]);
     }
 
     /**

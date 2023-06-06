@@ -8,6 +8,8 @@ import { DeleteOutline, EditOutlined, InfoOutlined } from "@material-ui/icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Search from "../../components/searching/Searching";
+import Swal from "sweetalert2";
+
 
 function Kriteria() {
   const [kriteria, setKriteria] = useState([]);
@@ -34,27 +36,66 @@ function Kriteria() {
   const handleShow2 = () => setShow2(true);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    handleClose();
+    Swal.fire({
+      title: "Konfirmasi Form",
+      text: "Apakah Data yang Anda Input sudah Benar?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Iya",
+      cancelButtonText: "Tidak",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Panggil API untuk melakukan logout
+        e.preventDefault();
 
-    const formData = new FormData();
+        const formData = new FormData();
+    
+        formData.append("nama_kriteria", nama);
+        formData.append("bobot_kriteria", bobot);
+        formData.append("atribut", atribut);
 
-    // formData.append("code", code);
-    formData.append("nama_kriteria", nama);
-    formData.append("bobot_kriteria", bobot);
-    formData.append("atribut", atribut);
+        axios
+        .post("http://127.0.0.1:8000/api/kriteria/store", formData)
+        .then((response) => {
+           if ((response, 200)) {
+              fetchData();
+            } else {
+              // Logout gagal
+              Swal.fire(
+                "Gagal",
+                "Terjadi kesalahan saat melakukan mengiput data.",
+                "error"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            // Logout gagal karena terjadi kesalahan
+            Swal.fire(
+              "Gagal",
+              "Terjadi kesalahan saat melakukan saat menginput data.",
+              "error"
+            );
+          });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Batal logout
+        Swal.fire("Batal", "Input data dibatalkan.", "info");
+      }
+    });
 
-    await axios
-      .post("http://127.0.0.1:8000/api/kriteria/store", formData)
-      .then((response) => {
-        setShow(false);
-        //redirect to dashboard
-        fetchData();
-      })
-      .catch((error) => {
-        //assign error to state "validation"
-        setValidation(error.response.data.errors);
-        // console.log(error.response.data);
-      });
+    // await axios
+    //   .post("http://127.0.0.1:8000/api/kriteria/store", formData)
+    //   .then((response) => {
+    //     setShow(false);
+    //     //redirect to dashboard
+    //     fetchData();
+    //   })
+    //   .catch((error) => {
+    //     //assign error to state "validation"
+    //     setValidation(error.response.data.errors);
+    //     // console.log(error.response.data);
+    //   });
   };
 
   const ShowKriteria = async () => {
@@ -71,12 +112,15 @@ function Kriteria() {
       });
   };
 
-  const HandleDelete = async () => {
-    await axios
-      .post(`http://127.0.0.1:8000/api/kriteria/delete/${param}`)
-      .then((response) => {
+  const handleDelete = (id) => {
+    axios
+      .post(`http://127.0.0.1:8000/api/kriteria/delete/${id}`)
+      .then(() => {
+        setKriteria(kriteria.filter((row) => row.id !== id));
         fetchData();
-        // console.log(response.data.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
 
@@ -94,26 +138,53 @@ function Kriteria() {
       });
   };
   const handleEdit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
+    handleClose1();
+    Swal.fire({
+      title: "Konfirmasi Form",
+      text: "Apakah Data yang Anda Input sudah Benar?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Iya",
+      cancelButtonText: "Tidak",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Panggil API untuk melakukan logout
+        e.preventDefault();
 
-    formData.append("code", code);
-    formData.append("nama_kriteria", nama);
-    formData.append("bobot_kriteria", bobot);
-    formData.append("atribut", atribut);
+        const formData = new FormData();
+    
+        formData.append("nama_kriteria", nama);
+        formData.append("bobot_kriteria", bobot);
+        formData.append("atribut", atribut);
 
-    await axios
-      .post(`http://127.0.0.1:8000/api/kriteria/update/${param}`, formData)
-      .then((response) => {
-        setShow1(false);
-        //redirect to dashboard
-        fetchData();
-      })
-      .catch((error) => {
-        //assign error to state "validation"
-        setValidation(error.response.data.errors);
-        // console.log(error.response.data);
-      });
+        axios
+        .post(`http://127.0.0.1:8000/api/kriteria/update/${param}`, formData)
+        .then((response) => {
+           if ((response, 200)) {
+              fetchData();
+            } else {
+              // Logout gagal
+              Swal.fire(
+                "Gagal",
+                "Terjadi kesalahan saat melakukan mengiput data.",
+                "error"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            // Logout gagal karena terjadi kesalahan
+            Swal.fire(
+              "Gagal",
+              "Terjadi kesalahan saat melakukan saat menginput data.",
+              "error"
+            );
+          });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Batal logout
+        Swal.fire("Batal", "Input data dibatalkan.", "info");
+      }
+    });
   };
 
   //token
@@ -214,19 +285,6 @@ function Kriteria() {
                   </Modal.Header>
                   <Modal.Body>
                     <Form onSubmit={handleSubmit}>
-                      {/* <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Code</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="C2"
-                          autoFocus
-                          value={code}
-                          onChange={(e) => setCode(e.target.value)}
-                        />
-                      </Form.Group> */}
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
@@ -234,9 +292,9 @@ function Kriteria() {
                         <Form.Label>Nama Kriteria</Form.Label>
                         <Form.Control
                           type="text"
-                          placeholder="Jumlah Art"
+                          placeholder="masukkan nama kriteria"
                           autoFocus
-                          value={nama}
+                          // value={nama}
                           onChange={(e) => setNama(e.target.value)}
                         />
                       </Form.Group>
@@ -247,9 +305,9 @@ function Kriteria() {
                         <Form.Label>Bobot Kriteria</Form.Label>
                         <Form.Control
                           type="number"
-                          placeholder="5"
+                          placeholder="masukkan bobot kriteria"
                           autoFocus
-                          value={bobot}
+                          // value={bobot}
                           onChange={(e) => setBobot(e.target.value)}
                         />
                       </Form.Group>
@@ -262,7 +320,7 @@ function Kriteria() {
                         <Form.Select
                           aria-label="Default select example"
                           size="lg"
-                          value={atribut}
+                          // value={atribut}
                           onChange={(e) => setAtribut(e.target.value)}
                         >
                           <option>Select Atribut Kriteria</option>
@@ -279,7 +337,7 @@ function Kriteria() {
                     <Button
                       type="submit"
                       variant="primary"
-                      onClick={handleClose && handleSubmit}
+                      onClick={handleSubmit}
                     >
                       Submit
                     </Button>
@@ -294,18 +352,6 @@ function Kriteria() {
                   </Modal.Header>
                   <Modal.Body>
                     <Form onSubmit={handleEdit}>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Code</Form.Label>
-                        <Form.Control
-                          type="text"
-                          autoFocus
-                          value={code}
-                          onChange={(e) => setCode(e.target.value)}
-                        />
-                      </Form.Group>
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
@@ -356,7 +402,7 @@ function Kriteria() {
                     <Button
                       type="submit"
                       variant="primary"
-                      onClick={handleClose1 && handleEdit}
+                      onClick={handleEdit}
                     >
                       Submit
                     </Button>
@@ -482,9 +528,7 @@ function Kriteria() {
                         </Button>{" "}
                         <Button
                           variant="outline-danger"
-                          as={Link}
-                          to={`/kriteria?id=${test.id}`}
-                          onClick={HandleDelete}
+                          onClick={() => handleDelete(test.id)}
                         >
                           <DeleteOutline />
                         </Button>

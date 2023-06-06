@@ -8,6 +8,7 @@ import { DeleteOutline, EditOutlined, InfoOutlined } from "@material-ui/icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Search from "../../components/searching/Searching";
+import Swal from "sweetalert2";
 
 
 function SubKriteria() {
@@ -36,30 +37,57 @@ function SubKriteria() {
   const handleShow2 = () => setShow2(true);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    handleClose();
+    Swal.fire({
+      title: "Konfirmasi Form",
+      text: "Apakah Data yang Anda Input sudah Benar?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Iya",
+      cancelButtonText: "Tidak",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Panggil API untuk melakukan logout
+        e.preventDefault();
 
-    const formData = new FormData();
+        const formData = new FormData();
+    
+        formData.append("id_kriterias", kriteria);
+        formData.append("nama", nama);
+        formData.append("nilai", nilai);
 
-    formData.append("id_kriterias", kriteria);
-    formData.append("nama", nama);
-    formData.append("nilai", nilai);
-
-    await axios
-      .post("http://127.0.0.1:8000/api/subkriteria/store", formData)
-      .then((response) => {
-        setShow(false);
-        //redirect to dashboard
-        fetchData();
-      })
-      .catch((error) => {
-        //assign error to state "validation"
-        setValidation(error.response.data.errors);
-        // console.log(error.response.data);
-      });
+        axios
+        .post("http://127.0.0.1:8000/api/subkriteria/store", formData)
+        .then((response) => {
+           if ((response, 200)) {
+              fetchData();
+            } else {
+              // Logout gagal
+              Swal.fire(
+                "Gagal",
+                "Terjadi kesalahan saat melakukan mengiput data.",
+                "error"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            // Logout gagal karena terjadi kesalahan
+            Swal.fire(
+              "Gagal",
+              "Terjadi kesalahan saat melakukan saat menginput data.",
+              "error"
+            );
+          });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Batal logout
+        Swal.fire("Batal", "Input data dibatalkan.", "info");
+      }
+    });
   };
 
   const List = async () => {
-    axios.get(`http://127.0.0.1:8000/api/kriteria/`).then((response) => {
+    axios.get(`http://127.0.0.1:8000/api/kriteria/?list=true`).then((response) => {
       //set response user to state
       setList(response.data);
       // console.log(response.data);
@@ -79,12 +107,15 @@ function SubKriteria() {
     await handleShow1();
   };
 
-  const HandleDelete = async () => {
-    await axios
-      .post(`http://127.0.0.1:8000/api/subkriteria/delete/${param}`)
-      .then((response) => {
+  const handleDelete = (id) => {
+    axios
+      .post(`http://127.0.0.1:8000/api/subkriteria/delete/${id}`)
+      .then(() => {
+        setSubKriteria(subKriteria.filter((row) => row.id !== id));
         fetchData();
-        // console.log(response.data.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
 
@@ -101,25 +132,53 @@ function SubKriteria() {
       });
   };
   const handleEdit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
+    handleClose1();
+    Swal.fire({
+      title: "Konfirmasi Form",
+      text: "Apakah Data yang Anda Input sudah Benar?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Iya",
+      cancelButtonText: "Tidak",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Panggil API untuk melakukan logout
+        e.preventDefault();
 
-    formData.append("id_kriterias", kriteria);
-    formData.append("nama", nama);
-    formData.append("nilai", nilai);
+        const formData = new FormData();
+    
+        formData.append("id_kriterias", kriteria);
+        formData.append("nama", nama);
+        formData.append("nilai", nilai);
 
-    await axios
-      .post(`http://127.0.0.1:8000/api/subkriteria/update/${param}`, formData)
-      .then((response) => {
-        setShow1(false);
-        //redirect to dashboard
-        fetchData();
-      })
-      .catch((error) => {
-        //assign error to state "validation"
-        setValidation(error.response.data.errors);
-        // console.log(error.response.data);
-      });
+        axios
+        .post(`http://127.0.0.1:8000/api/subkriteria/update/${param}`, formData)
+        .then((response) => {
+           if ((response, 200)) {
+              fetchData();
+            } else {
+              // Logout gagal
+              Swal.fire(
+                "Gagal",
+                "Terjadi kesalahan saat melakukan mengiput data.",
+                "error"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            // Logout gagal karena terjadi kesalahan
+            Swal.fire(
+              "Gagal",
+              "Terjadi kesalahan saat melakukan saat menginput data.",
+              "error"
+            );
+          });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Batal logout
+        Swal.fire("Batal", "Input data dibatalkan.", "info");
+      }
+    });
   };
 
   //token
@@ -133,7 +192,7 @@ function SubKriteria() {
       .get("http://127.0.0.1:8000/api/subkriteria/")
       .then((response) => {
         //set response user to state
-        setSubKriteria(response.data.data.data);
+        setSubKriteria(response.data);
       });
   };
   // console.log(keluarga);
@@ -155,7 +214,7 @@ function SubKriteria() {
           .then((response) => {
             //set response user to state
             setSubKriteria(response.data);
-            console.log(response.data);
+            // console.log(response.data);
           });
       } catch (error) {
         console.error("Error:", error);
@@ -184,7 +243,7 @@ function SubKriteria() {
           <div className="container-fluid">
             <div className="row mb-2">
               <div className="col-sm-6">
-                <h1>Data Kriteria</h1>
+                <h1>Data SubKriteria</h1>
               </div>
               <div className="col-sm-6">
                 <ol className="breadcrumb float-sm-right">
@@ -220,7 +279,7 @@ function SubKriteria() {
 
                 <Modal show={show} onHide={handleClose}>
                   <Modal.Header closeButton>
-                    <Modal.Title>Input Data Kriteria</Modal.Title>
+                    <Modal.Title>Input Data SubKriteria</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
                     <Form onSubmit={handleSubmit}>
@@ -228,7 +287,78 @@ function SubKriteria() {
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
-                        <Form.Label>Kriteria</Form.Label>
+                        <Form.Label>Nama Kriteria</Form.Label>
+                        <br />
+                        <Form.Select
+                          aria-label="Default select example"
+                          size="lg"
+                          // value={kriteria}
+                          onChange={(e) => setKriteria(e.target.value)}
+                        >
+                          <option>
+                          - - - - - - - - - - - - - - - SILAHKAN PILIH - - - - -
+                          - - - - - - - - - -
+                        </option>
+                        {list.map((gg) => (
+                          <option value={gg.id}>{gg.nama}</option>
+                        ))}
+                        </Form.Select>
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Nama SubKriteria</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="masukkan subkriteria"
+                          autoFocus
+                          // value={nama}
+                          onChange={(e) => setNama(e.target.value)}
+                        />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Nilai SubKriteria</Form.Label>
+                        <Form.Control
+                          type="number"
+                          placeholder="masukkan nilai"
+                          autoFocus
+                          // value={nilai}
+                          onChange={(e) => setNilai(e.target.value)}
+                        />
+                      </Form.Group>
+                    </Form>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                      Close
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      onClick={handleSubmit}
+                    >
+                      Submit
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+              </>
+              {/* MODAL EDIT DATA */}
+              <>
+                <Modal show={show1} onHide={handleClose1}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Edit Data SubKriteria</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <Form onSubmit={handleEdit}>
+                    <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Nama Kriteria</Form.Label>
                         <br />
                         <Form.Select
                           aria-label="Default select example"
@@ -250,77 +380,6 @@ function SubKriteria() {
                         controlId="exampleForm.ControlInput1"
                       >
                         <Form.Label>Nama SubKriteria</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Jumlah Art"
-                          autoFocus
-                          value={nama}
-                          onChange={(e) => setNama(e.target.value)}
-                        />
-                      </Form.Group>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Nilai SubKriteria</Form.Label>
-                        <Form.Control
-                          type="number"
-                          placeholder="5"
-                          autoFocus
-                          value={nilai}
-                          onChange={(e) => setNilai(e.target.value)}
-                        />
-                      </Form.Group>
-                    </Form>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                      Close
-                    </Button>
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      onClick={handleClose && handleSubmit}
-                    >
-                      Submit
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
-              </>
-              {/* MODAL EDIT DATA */}
-              <>
-                <Modal show={show1} onHide={handleClose1}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Edit Data Kriteria</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Form onSubmit={handleEdit}>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Kriteria</Form.Label>
-                        <br />
-                        <Form.Select
-                          aria-label="Default select example"
-                          size="lg"
-                          value={kriteria}
-                          onChange={(e) => setKriteria(e.target.value)}
-                        >
-                          {list.map((test) => (
-                            <>
-                              <option value={test.id}>
-                                {test.nama_kriteria}
-                              </option>
-                            </>
-                          ))}
-                        </Form.Select>
-                      </Form.Group>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Nama Kriteria</Form.Label>
                         <Form.Control
                           type="text"
                           autoFocus
@@ -349,7 +408,7 @@ function SubKriteria() {
                     <Button
                       type="submit"
                       variant="primary"
-                      onClick={handleClose1 && handleEdit}
+                      onClick={handleEdit}
                     >
                       Submit
                     </Button>
@@ -423,7 +482,7 @@ function SubKriteria() {
                     <th>Nama SubKriteria</th>
                     <th>Nama Kriteria</th>
                     <th>Nilai SubKriteria</th>
-                    <th>Code Kriteria</th>
+                    <th>Atribut Kriteria</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -454,9 +513,7 @@ function SubKriteria() {
                         </Button>{" "}
                         <Button
                           variant="outline-danger"
-                          as={Link}
-                          to={`/subkriteria?id=${test.id}`}
-                          onClick={HandleDelete}
+                          onClick={() => handleDelete(test.id)}
                         >
                           <DeleteOutline />
                         </Button>

@@ -199,14 +199,6 @@ function CalonPenerima() {
                           >
                             <InfoOutlined />
                           </Button>{" "}
-                          {/* <Button
-                            variant="outline-danger"
-                            as={Link}
-                            to={`/kriteria?id=${test.id}`}
-                            // onClick={fetchData}
-                          >
-                            <DeleteOutline />
-                          </Button> */}
                         </td>
                       </tr>
                     ))

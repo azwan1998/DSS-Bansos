@@ -15,15 +15,15 @@ class SubKriteria extends JsonResource
      */
     public function toArray($request)
     {
-        $kriteria = Kriteria::select('nama_kriteria', 'atribut')->where('id', $this->id)->first();
+        $kriteria = Kriteria::select('nama_kriteria', 'atribut')->where('id', $this->id_kriterias)->first();
 
-
+        // dd($kriteria);
         return  [
             'id' => $this->id,
             'nama' => $this->nama,
             'nilai' => $this->nilai,
             'nama_kriteria' => $kriteria->nama_kriteria,
-            'atribut' => $kriteria->atribut ? 'BENEFIT' : 'COST',
+            'atribut' => $kriteria->atribut == "true" ? "BENEFIT" : "COST",
         ];
     }
 }
