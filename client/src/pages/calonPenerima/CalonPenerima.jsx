@@ -17,11 +17,16 @@ function CalonPenerima() {
   const [id_daerahs, setId_daerah] = useState();
   const history = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [detail, setDetail] = useState();
+
 
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [show2, setShow2] = useState(false);
+  const handleClose2 = () => setShow2(false);
+  const handleShow2 = () => setShow2(true);
   const [loading, setLoading] = useState(false);
 
   //token
@@ -46,6 +51,20 @@ function CalonPenerima() {
       setDaerah(response.data.data);
       // console.log(response.data.data);
     });
+  };
+
+  const handleDetail = (id) => {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    axios
+      .get(`http://127.0.0.1:8000/api/penerima/show/${id}`)
+      .then((response) => {
+        setDetail(response.data.data);
+        handleShow2();
+        console.log(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const Proses = async () => {
@@ -193,9 +212,7 @@ function CalonPenerima() {
                         <td>
                           <Button
                             variant="outline-info"
-                            as={Link}
-                            to={`/kriteria?id=${test.id}`}
-                            // onClick={fetchData}
+                            onClick={() => handleDetail(test.id)}
                           >
                             <InfoOutlined />
                           </Button>{" "}
@@ -222,6 +239,7 @@ function CalonPenerima() {
                         size="lg"
                         onChange={(e) => setId_daerah(e.target.value)}
                       >
+                        <option>Silahkan Pilih Daerah Yang Ingin di Proses</option>
                         <option value={"null"}>Semua Daerah</option>
                         {daerah.map((gg) => (
                           <option value={gg.id}>{gg.nama_daerah}</option>
@@ -239,6 +257,82 @@ function CalonPenerima() {
                   </Button>
                 </Modal.Footer>
               </Modal>
+              <>
+                <Modal show={show2} onHide={handleClose2}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Show Detail calon penerima</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <Form>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Nama</Form.Label>
+                        <Form.Control
+                          disabled
+                          value={detail.nama}
+                        />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>NIK</Form.Label>
+                        <Form.Control
+                          disabled
+                          value={detail.NIK}
+                        />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Daerah</Form.Label>
+                        <Form.Control
+                          disabled
+                          value={detail.nama_daerah}
+                        />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Alamat</Form.Label>
+                        <Form.Control
+                          disabled
+                          value={detail.alamat}
+                        />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Nilai</Form.Label>
+                        <Form.Control
+                          disabled
+                          value={detail.nilai}
+                        />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Jenis Kelamin</Form.Label>
+                        <Form.Control
+                          disabled
+                          value={detail.jenis_kelamin}
+                        />
+                      </Form.Group>
+                    </Form>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose2}>
+                      Close
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+              </>
             </div>
           </div>
         </section>

@@ -180,7 +180,15 @@ class CalonPenerimaController extends Controller
      */
     public function show($id)
     {
-        //
+        $calon = Penerima::select('calon_penerimas.*','kepala_keluargas.nama','kepala_keluargas.NIK','daerahs.nama_daerah','kepala_keluargas.jenis_kelamin','kepala_keluargas.alamat')
+                ->join('Kepala_keluargas','kepala_keluargas.id','=','calon_penerimas.id_kepala_keluargas')
+                ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
+                ->where('calon_penerimas.id', $id)
+                ->first();
+                
+        return response()->json([
+            'data' => $calon
+        ]);
     }
     /**
      * Remove the specified resource from storage.
