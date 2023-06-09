@@ -79,7 +79,11 @@ class SubKriteriaController extends Controller
      */
     public function show($id)
     {
-        $sub = SubKriteria::find($id);
+        $sub = SubKriteria::select('sub_kriterias.*','kriterias.nama_kriteria','kriterias.code')
+                ->join('Kriterias','kriterias.id','=','sub_kriterias.id_kriterias')
+                ->where('kriterias.isDeleted', false)
+                ->where('sub_kriterias.id', $id)
+                ->first();
         
         return response()->json([
             'data' => $sub

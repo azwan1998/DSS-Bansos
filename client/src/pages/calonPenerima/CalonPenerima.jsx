@@ -39,7 +39,7 @@ function CalonPenerima() {
     await axios.get("http://127.0.0.1:8000/api/penerima").then((response) => {
       //set response user to state
       setCalonPenerima(response.data);
-      // console.log(response.data.data);
+      console.log(response.data);
     });
   };
 
@@ -60,7 +60,7 @@ function CalonPenerima() {
       .then((response) => {
         setDetail(response.data.data);
         handleShow2();
-        console.log(response.data.data);
+        // console.log(response.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -107,6 +107,7 @@ function CalonPenerima() {
       //redirect login page
       history("/login");
     }
+    // fetchData();
 
     getDaerah();
 
@@ -131,6 +132,7 @@ function CalonPenerima() {
 
     //call function "fetchData"
     // fetchData();
+    // console.log('ahahahahahaahahah');
   }, [searchTerm]);
 
   const handleSearch = (searchTerm) => {
@@ -257,7 +259,7 @@ function CalonPenerima() {
                   </Button>
                 </Modal.Footer>
               </Modal>
-              <>
+              {/* <>
                 <Modal show={show2} onHide={handleClose2}>
                   <Modal.Header closeButton>
                     <Modal.Title>Show Detail calon penerima</Modal.Title>
@@ -271,7 +273,7 @@ function CalonPenerima() {
                         <Form.Label>Nama</Form.Label>
                         <Form.Control
                           disabled
-                          value={detail.nama}
+                          // value={detail.nama}
                         />
                       </Form.Group>
                       <Form.Group
@@ -332,7 +334,7 @@ function CalonPenerima() {
                     </Button>
                   </Modal.Footer>
                 </Modal>
-              </>
+              </> */}
             </div>
           </div>
         </section>

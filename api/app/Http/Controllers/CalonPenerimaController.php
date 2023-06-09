@@ -87,7 +87,6 @@ class CalonPenerimaController extends Controller
                     ->get();
         }
         
-
         $bobot = Kriteria::select('bobot_kriteria','atribut')->get();
 
         //periode 

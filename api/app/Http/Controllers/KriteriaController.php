@@ -29,7 +29,7 @@ class KriteriaController extends Controller
                     ->where('nama_kriteria','LIKE','%'.$request->Searching.'%')
                     ->get();
         }else{
-            $kriteria = Kriteria::where('isDeleted', false)->paginate(10);
+            $kriteria = Kriteria::where('isDeleted', false)->orderBy('id', 'DESC')->paginate(10);
         }
         
     
@@ -111,8 +111,10 @@ class KriteriaController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $getKriteria = Kriteria::find($id);
+
         $kriteria = Kriteria::findorNew($id);
-        $kriteria->code = $request->code;
+        $kriteria->code = $getKriteria->code;
         $kriteria->nama_kriteria = $request->nama_kriteria;
         $kriteria->bobot_kriteria = $request->bobot_kriteria;
         $kriteria->atribut = $request->atribut;

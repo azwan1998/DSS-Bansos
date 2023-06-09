@@ -63,7 +63,7 @@ function Login() {
         <div className="hold-transition login-page">
           <div className="login-box">
             {/* /.login-logo */}
-            <div className="card card-outline card-primary">
+            <div className="card card-outline card-success">
               <div className="card-header text-center">
                 <img
                   src="../../dist/img/log.png"
@@ -130,7 +130,7 @@ function Login() {
                   )}
                   <div className="input-group mb-3">
                     {/* /.col */}
-                    <button type="submit" className="btn btn-primary btn-block">
+                    <button type="submit" className="btn btn-success btn-block">
                       Login
                     </button>
                   </div>

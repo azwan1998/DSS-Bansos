@@ -10,22 +10,24 @@ import Col from "react-bootstrap/Col";
 import Search from "../../components/searching/Searching";
 import Swal from "sweetalert2";
 
-
 function SubKriteria() {
   const [subKriteria, setSubKriteria] = useState([]);
   const history = useNavigate();
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [show2, setShow2] = useState(false);
+
   const [kriteria, setKriteria] = useState("");
   const [nama, setNama] = useState("");
   const [nilai, setNilai] = useState("");
+
+  const [detail, setDetail] = useState([]);
+
   const [validation, setValidation] = useState([]);
-  const [id, setId] = useSearchParams(0);
   const [list, setList] = useState([]);
-  id.get("id");
-  const param = id.get("id");
   const [searchTerm, setSearchTerm] = useState("");
+  const [idEdit, setIdEdit] = useState("");
+  const token = localStorage.getItem("token");
 
   // console.log(param);
 
@@ -51,15 +53,15 @@ function SubKriteria() {
         e.preventDefault();
 
         const formData = new FormData();
-    
+
         formData.append("id_kriterias", kriteria);
         formData.append("nama", nama);
         formData.append("nilai", nilai);
 
         axios
-        .post("http://127.0.0.1:8000/api/subkriteria/store", formData)
-        .then((response) => {
-           if ((response, 200)) {
+          .post("http://127.0.0.1:8000/api/subkriteria/store", formData)
+          .then((response) => {
+            if ((response, 200)) {
               fetchData();
             } else {
               // Logout gagal
@@ -85,53 +87,88 @@ function SubKriteria() {
       }
     });
   };
+  
 
   const List = async () => {
-    axios.get(`http://127.0.0.1:8000/api/kriteria/?list=true`).then((response) => {
-      //set response user to state
-      setList(response.data);
-      // console.log(response.data);
-    });
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    axios
+      .get(`http://127.0.0.1:8000/api/kriteria/?list=true`)
+      .then((response) => {
+        //set response user to state
+        setList(response.data);
+        // console.log(response.data);
+      });
   };
 
-  const ShowSubKriteria = async () => {
+  const ShowSubKriteria = (id) => {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     axios
-      .get(`http://127.0.0.1:8000/api/subkriteria/show/${param}`)
+      .get(`http://127.0.0.1:8000/api/subkriteria/show/${id}`)
       .then((response) => {
         //set response user to state
         setKriteria(response.data.data.nama_kriteria);
         setNama(response.data.data.nama);
         setNilai(response.data.data.nilai);
+        setIdEdit(id);
+        handleShow1();
         // console.log(response.data.data.data);
       });
-    await handleShow1();
   };
 
   const handleDelete = (id) => {
-    axios
-      .post(`http://127.0.0.1:8000/api/subkriteria/delete/${id}`)
-      .then(() => {
-        setSubKriteria(subKriteria.filter((row) => row.id !== id));
-        fetchData();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    Swal.fire({
+      title: "Konfirmasi Form",
+      text: "Apakah Anda Yakin Menghapus data ini?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Iya",
+      cancelButtonText: "Tidak",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        axios
+          .post(`http://127.0.0.1:8000/api/subkriteria/delete/${id}`)
+          .then((response) => {
+            if ((response, 201)) {
+              setSubKriteria(subKriteria.filter((row) => row.id !== id));
+              fetchData();
+            } else {
+              // Logout gagal
+              Swal.fire(
+                "Gagal",
+                "Terjadi kesalahan saat menghapus data.",
+                "error"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            // Logout gagal karena terjadi kesalahan
+            Swal.fire(
+              "Gagal",
+              "Terjadi kesalahan saat saat menghapus data.",
+              "error"
+            );
+          });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Batal logout
+        Swal.fire("Batal", "Hapus data dibatalkan.", "info");
+      }
+    });
   };
 
-  const ShowSubKriteria1 = async () => {
-    await axios
-      .get(`http://127.0.0.1:8000/api/subkriteria/show/${param}`)
+  const ShowSubKriteria1 = (id) => {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    axios
+      .get(`http://127.0.0.1:8000/api/subkriteria/show/${id}`)
       .then((response) => {
         //set response user to state
-        setKriteria(response.data.data.id_kriterias);
-        setNama(response.data.data.nama);
-        setNilai(response.data.data.nilai);
+        setDetail(response.data.data);
         handleShow2();
         // console.log(response.data.data.data);
       });
   };
-  const handleEdit = async (e) => {
+  const handleEdit = (idEdit) => {
     handleClose1();
     Swal.fire({
       title: "Konfirmasi Form",
@@ -143,19 +180,23 @@ function SubKriteria() {
     }).then((result) => {
       if (result.isConfirmed) {
         // Panggil API untuk melakukan logout
-        e.preventDefault();
 
         const formData = new FormData();
-    
+
         formData.append("id_kriterias", kriteria);
         formData.append("nama", nama);
         formData.append("nilai", nilai);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
         axios
-        .post(`http://127.0.0.1:8000/api/subkriteria/update/${param}`, formData)
-        .then((response) => {
-           if ((response, 200)) {
+          .post(
+            `http://127.0.0.1:8000/api/subkriteria/update/${idEdit}`,
+            formData
+          )
+          .then((response) => {
+            if ((response, 200)) {
               fetchData();
+              setIdEdit(null);
             } else {
               // Logout gagal
               Swal.fire(
@@ -176,13 +217,14 @@ function SubKriteria() {
           });
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         // Batal logout
+        setIdEdit(null);
         Swal.fire("Batal", "Input data dibatalkan.", "info");
       }
     });
   };
 
   //token
-  const token = localStorage.getItem("token");
+  
   // console.log(token);
   const fetchData = async () => {
     //set axios header dengan type Authorization + Bearer token
@@ -223,7 +265,6 @@ function SubKriteria() {
 
     Searching();
     //call function "fetchData"
-    
 
     //call list
     List();
@@ -232,7 +273,6 @@ function SubKriteria() {
   const handleSearch = (searchTerm) => {
     setSearchTerm(searchTerm);
   };
-
 
   return (
     <div>
@@ -265,7 +305,7 @@ function SubKriteria() {
               <>
                 <Row>
                   <Col>
-                  <Search handleSearch={handleSearch} />
+                    <Search handleSearch={handleSearch} />
                   </Col>
                   <Col></Col>
                   <Col md="end">
@@ -296,12 +336,12 @@ function SubKriteria() {
                           onChange={(e) => setKriteria(e.target.value)}
                         >
                           <option>
-                          - - - - - - - - - - - - - - - SILAHKAN PILIH - - - - -
-                          - - - - - - - - - -
-                        </option>
-                        {list.map((gg) => (
-                          <option value={gg.id}>{gg.nama}</option>
-                        ))}
+                            - - - - - - - - - - - - - - - SILAHKAN PILIH - - - -
+                            - - - - - - - - - - -
+                          </option>
+                          {list.map((gg) => (
+                            <option value={gg.id}>{gg.nama}</option>
+                          ))}
                         </Form.Select>
                       </Form.Group>
                       <Form.Group
@@ -354,7 +394,7 @@ function SubKriteria() {
                   </Modal.Header>
                   <Modal.Body>
                     <Form onSubmit={handleEdit}>
-                    <Form.Group
+                      <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
@@ -367,12 +407,12 @@ function SubKriteria() {
                           onChange={(e) => setKriteria(e.target.value)}
                         >
                           <option>
-                          - - - - - - - - - - - - - - - SILAHKAN PILIH - - - - -
-                          - - - - - - - - - -
-                        </option>
-                        {list.map((gg) => (
-                          <option value={gg.id}>{gg.nama}</option>
-                        ))}
+                            - - - - - - - - - - - - - - - SILAHKAN PILIH - - - -
+                            - - - - - - - - - - -
+                          </option>
+                          {list.map((gg) => (
+                            <option value={gg.id}>{gg.nama}</option>
+                          ))}
                         </Form.Select>
                       </Form.Group>
                       <Form.Group
@@ -408,7 +448,7 @@ function SubKriteria() {
                     <Button
                       type="submit"
                       variant="primary"
-                      onClick={handleEdit}
+                      onClick={() => handleEdit(idEdit)}
                     >
                       Submit
                     </Button>
@@ -419,7 +459,7 @@ function SubKriteria() {
               <>
                 <Modal show={show2} onHide={handleClose2}>
                   <Modal.Header closeButton>
-                    <Modal.Title>Show Data Kriteria</Modal.Title>
+                    <Modal.Title>Show Data SubKriteria</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
                     <Form>
@@ -427,12 +467,10 @@ function SubKriteria() {
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
-                        <Form.Label>Code</Form.Label>
+                        <Form.Label>Code Kriteria</Form.Label>
                         <Form.Control
-                          type="text"
-                          autoFocus
                           disabled
-                          value={kriteria}
+                          value={detail.code}
                         />
                       </Form.Group>
                       <Form.Group
@@ -441,22 +479,28 @@ function SubKriteria() {
                       >
                         <Form.Label>Nama Kriteria</Form.Label>
                         <Form.Control
-                          type="text"
-                          autoFocus
                           disabled
-                          value={nama}
+                          value={detail.nama_kriteria}
                         />
                       </Form.Group>
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
-                        <Form.Label>Bobot Kriteria</Form.Label>
+                        <Form.Label>Nama SubKriteria</Form.Label>
                         <Form.Control
-                          type="number"
-                          autoFocus
                           disabled
-                          value={nilai}
+                          value={detail.nama}
+                        />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Nilai</Form.Label>
+                        <Form.Control
+                          disabled
+                          value={detail.nilai}
                         />
                       </Form.Group>
                     </Form>
@@ -464,13 +508,6 @@ function SubKriteria() {
                   <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose2}>
                       Close
-                    </Button>
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      onClick={ShowSubKriteria}
-                    >
-                      Submit
                     </Button>
                   </Modal.Footer>
                 </Modal>
@@ -489,7 +526,7 @@ function SubKriteria() {
                 <tbody>
                   {subKriteria.map((test, index) => (
                     <tr key={index}>
-                      <td>{index+1}</td>
+                      <td>{index + 1}</td>
                       <td>{test.nama}</td>
                       <td>{test.nama_kriteria}</td>
                       <td>{test.nilai}</td>
@@ -497,17 +534,13 @@ function SubKriteria() {
                       <td>
                         <Button
                           variant="outline-warning"
-                          as={Link}
-                          to={`/subkriteria?id=${test.id}`}
-                          onClick={ShowSubKriteria}
+                          onClick={() => ShowSubKriteria(test.id)}
                         >
                           <EditOutlined />
                         </Button>{" "}
                         <Button
                           variant="outline-info"
-                          as={Link}
-                          to={`/subkriteria?id=${test.id}`}
-                          onClick={ShowSubKriteria1}
+                          onClick={() => ShowSubKriteria1(test.id)}
                         >
                           <InfoOutlined />
                         </Button>{" "}

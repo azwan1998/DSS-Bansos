@@ -24,7 +24,7 @@ class DaerahController extends Controller
         if($request->Searching){
             $daerah = Daerah::where('nama_daerah','LIKE','%'.$request->Searching.'%')->get();
         }else{
-            $daerah = Daerah::all();
+            $daerah = Daerah::orderBy('id', 'DESC')->get();
         }
         
 

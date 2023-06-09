@@ -10,22 +10,29 @@ import Col from "react-bootstrap/Col";
 import Search from "../../components/searching/Searching";
 import Swal from "sweetalert2";
 
-
 function Kriteria() {
   const [kriteria, setKriteria] = useState([]);
   const history = useNavigate();
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [show2, setShow2] = useState(false);
-  const [code, setCode] = useState("");
+  const [idEdit, setIdEdit] = useState("");
+
+  //input
   const [nama, setNama] = useState("");
   const [bobot, setBobot] = useState("");
   const [atribut, setAtribut] = useState("");
+  //edit
+  const [nama1, setNama1] = useState("");
+  const [bobot1, setBobot1] = useState("");
+  const [atribut1, setAtribut1] = useState("");
+  //show
+  const [code2, setCode2] = useState("");
+  const [nama2, setNama2] = useState("");
+  const [bobot2, setBobot2] = useState("");
+  const [atribut2, setAtribut2] = useState("");
+
   const [validation, setValidation] = useState([]);
-  const [id, setId] = useSearchParams();
-  id.get("id");
-  const param = id.get("id");
-  console.log(param);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleClose = () => setShow(false);
@@ -50,15 +57,15 @@ function Kriteria() {
         e.preventDefault();
 
         const formData = new FormData();
-    
+
         formData.append("nama_kriteria", nama);
         formData.append("bobot_kriteria", bobot);
         formData.append("atribut", atribut);
 
         axios
-        .post("http://127.0.0.1:8000/api/kriteria/store", formData)
-        .then((response) => {
-           if ((response, 200)) {
+          .post("http://127.0.0.1:8000/api/kriteria/store", formData)
+          .then((response) => {
+            if ((response, 200)) {
               fetchData();
             } else {
               // Logout gagal
@@ -98,46 +105,77 @@ function Kriteria() {
     //   });
   };
 
-  const ShowKriteria = async () => {
-    await axios
-      .get(`http://127.0.0.1:8000/api/kriteria/show/${param}`)
+  const ShowKriteria = (id) => {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    axios
+      .get(`http://127.0.0.1:8000/api/kriteria/show/${id}`)
       .then((response) => {
         //set response user to state
-        setCode(response.data.data.code);
-        setNama(response.data.data.nama_kriteria);
-        setBobot(response.data.data.bobot_kriteria);
-        setAtribut(response.data.data.atribut);
+        setNama1(response.data.data.nama_kriteria);
+        setBobot1(response.data.data.bobot_kriteria);
+        setAtribut1(response.data.data.atribut);
         handleShow1();
+        setIdEdit(id);
         // console.log(response.data.data.data);
       });
   };
 
   const handleDelete = (id) => {
-    axios
-      .post(`http://127.0.0.1:8000/api/kriteria/delete/${id}`)
-      .then(() => {
-        setKriteria(kriteria.filter((row) => row.id !== id));
-        fetchData();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    Swal.fire({
+      title: "Konfirmasi Form",
+      text: "Apakah Anda Yakin Menghapus data ini?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Iya",
+      cancelButtonText: "Tidak",
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        axios
+          .post(`http://127.0.0.1:8000/api/kriteria/delete/${id}`)
+          .then((response) => {
+            if ((response, 201)) {
+              setKriteria(kriteria.filter((row) => row.id !== id));
+              fetchData();
+            } else {
+              // Logout gagal
+              Swal.fire(
+                "Gagal",
+                "Terjadi kesalahan saat menghapus data.",
+                "error"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            // Logout gagal karena terjadi kesalahan
+            Swal.fire(
+              "Gagal",
+              "Terjadi kesalahan saat saat menghapus data.",
+              "error"
+            );
+          });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Batal logout
+        Swal.fire("Batal", "Hapus data dibatalkan.", "info");
+      }
+    });
   };
 
-  const ShowKriteria1 = async () => {
-    await axios
-      .get(`http://127.0.0.1:8000/api/kriteria/show/${param}`)
+  const ShowKriteria1 = (id) => {
+    axios
+      .get(`http://127.0.0.1:8000/api/kriteria/show/${id}`)
       .then((response) => {
         //set response user to state
-        setCode(response.data.data.code);
-        setNama(response.data.data.nama_kriteria);
-        setBobot(response.data.data.bobot_kriteria);
-        setAtribut(response.data.data.atribut);
+        setCode2(response.data.data.code);
+        setNama2(response.data.data.nama_kriteria);
+        setBobot2(response.data.data.bobot_kriteria);
+        setAtribut2(response.data.data.atribut);
         handleShow2();
         // console.log(response.data.data.data);
       });
   };
-  const handleEdit = async (e) => {
+  const handleEdit = (idEdit) => {
     handleClose1();
     Swal.fire({
       title: "Konfirmasi Form",
@@ -149,19 +187,20 @@ function Kriteria() {
     }).then((result) => {
       if (result.isConfirmed) {
         // Panggil API untuk melakukan logout
-        e.preventDefault();
+        // e.preventDefault();
 
         const formData = new FormData();
-    
-        formData.append("nama_kriteria", nama);
-        formData.append("bobot_kriteria", bobot);
-        formData.append("atribut", atribut);
+
+        formData.append("nama_kriteria", nama1);
+        formData.append("bobot_kriteria", bobot1);
+        formData.append("atribut", atribut1);
 
         axios
-        .post(`http://127.0.0.1:8000/api/kriteria/update/${param}`, formData)
-        .then((response) => {
-           if ((response, 200)) {
+          .post(`http://127.0.0.1:8000/api/kriteria/update/${idEdit}`, formData)
+          .then((response) => {
+            if ((response, 200)) {
               fetchData();
+              setIdEdit(null);
             } else {
               // Logout gagal
               Swal.fire(
@@ -182,6 +221,7 @@ function Kriteria() {
           });
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         // Batal logout
+        setIdEdit(null);
         Swal.fire("Batal", "Input data dibatalkan.", "info");
       }
     });
@@ -360,8 +400,8 @@ function Kriteria() {
                         <Form.Control
                           type="text"
                           autoFocus
-                          value={nama}
-                          onChange={(e) => setNama(e.target.value)}
+                          value={nama1}
+                          onChange={(e) => setNama1(e.target.value)}
                         />
                       </Form.Group>
                       <Form.Group
@@ -372,8 +412,8 @@ function Kriteria() {
                         <Form.Control
                           type="number"
                           autoFocus
-                          value={bobot}
-                          onChange={(e) => setBobot(e.target.value)}
+                          value={bobot1}
+                          onChange={(e) => setBobot1(e.target.value)}
                         />
                       </Form.Group>
                       <Form.Group
@@ -385,8 +425,8 @@ function Kriteria() {
                         <Form.Select
                           aria-label="Default select example"
                           size="lg"
-                          value={atribut}
-                          onChange={(e) => setAtribut(e.target.value)}
+                          value={atribut1}
+                          onChange={(e) => setAtribut1(e.target.value)}
                         >
                           <option>Select Atribut Kriteria</option>
                           <option value="true">BENEFIT</option>
@@ -402,88 +442,7 @@ function Kriteria() {
                     <Button
                       type="submit"
                       variant="primary"
-                      onClick={handleEdit}
-                    >
-                      Submit
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
-              </>
-              {/* MODAL SHOW DATA */}
-              <>
-                <Modal show={show2} onHide={handleClose2}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Show Data Kriteria</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Form>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Code</Form.Label>
-                        <Form.Control
-                          type="text"
-                          autoFocus
-                          disabled
-                          value={code}
-                          onChange={(e) => setCode(e.target.value)}
-                        />
-                      </Form.Group>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Nama Kriteria</Form.Label>
-                        <Form.Control
-                          type="text"
-                          autoFocus
-                          disabled
-                          value={nama}
-                          onChange={(e) => setNama(e.target.value)}
-                        />
-                      </Form.Group>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Bobot Kriteria</Form.Label>
-                        <Form.Control
-                          type="number"
-                          autoFocus
-                          disabled
-                          value={bobot}
-                          onChange={(e) => setBobot(e.target.value)}
-                        />
-                      </Form.Group>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Atirbut</Form.Label>
-                        <br />
-                        <Form.Select
-                          aria-label="Default select example"
-                          size="lg"
-                          disabled
-                          value={atribut}
-                          onChange={(e) => setAtribut(e.target.value)}
-                        >
-                          <option>Select Atribut Kriteria</option>
-                          <option value="BENEFIT">BENEFIT</option>
-                          <option value="COST">COST</option>
-                        </Form.Select>
-                      </Form.Group>
-                    </Form>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose2}>
-                      Close
-                    </Button>
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      onClick={ShowKriteria}
+                      onClick={() => handleEdit(idEdit)}
                     >
                       Submit
                     </Button>
@@ -504,7 +463,7 @@ function Kriteria() {
                 <tbody>
                   {kriteria.map((test, index) => (
                     <tr key={test.id}>
-                      <td>{index+1}</td>
+                      <td>{index + 1}</td>
                       <td>{test.code}</td>
                       <td>{test.nama}</td>
                       <td>{test.bobot_kriteria}</td>
@@ -512,17 +471,13 @@ function Kriteria() {
                       <td>
                         <Button
                           variant="outline-warning"
-                          as={Link}
-                          to={`/kriteria?id=${test.id}`}
-                          onClick={ShowKriteria}
+                          onClick={() => ShowKriteria(test.id)}
                         >
                           <EditOutlined />
                         </Button>{" "}
                         <Button
                           variant="outline-info"
-                          as={Link}
-                          to={`/kriteria?id=${test.id}`}
-                          onClick={ShowKriteria1}
+                          onClick={() => ShowKriteria1(test.id)}
                         >
                           <InfoOutlined />
                         </Button>{" "}
@@ -532,6 +487,54 @@ function Kriteria() {
                         >
                           <DeleteOutline />
                         </Button>
+                        {/* MODAL SHOW DATA */}
+                        <>
+                          <Modal show={show2} onHide={handleClose2}>
+                            <Modal.Header closeButton>
+                              <Modal.Title>Show Data Kriteria</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                              <Form>
+                                <Form.Group
+                                  className="mb-3"
+                                  controlId="exampleForm.ControlInput1"
+                                >
+                                  <Form.Label>Code</Form.Label>
+                                  <Form.Control disabled value={code2} />
+                                </Form.Group>
+                                <Form.Group
+                                  className="mb-3"
+                                  controlId="exampleForm.ControlInput1"
+                                >
+                                  <Form.Label>Nama Kriteria</Form.Label>
+                                  <Form.Control disabled value={nama2} />
+                                </Form.Group>
+                                <Form.Group
+                                  className="mb-3"
+                                  controlId="exampleForm.ControlInput1"
+                                >
+                                  <Form.Label>Bobot Kriteria</Form.Label>
+                                  <Form.Control disabled value={bobot2} />
+                                </Form.Group>
+                                <Form.Group
+                                  className="mb-3"
+                                  controlId="exampleForm.ControlInput1"
+                                >
+                                  <Form.Label>Atribut</Form.Label>
+                                  <Form.Control disabled value={atribut2} />
+                                </Form.Group>
+                              </Form>
+                            </Modal.Body>
+                            <Modal.Footer>
+                              <Button
+                                variant="secondary"
+                                onClick={handleClose2}
+                              >
+                                Close
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                        </>
                       </td>
                     </tr>
                   ))}
