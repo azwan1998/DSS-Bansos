@@ -21,9 +21,10 @@ class Kriteria extends JsonResource
             'id' => $this->id,
             'nama' => $this->nama_kriteria,
             'bobot_kriteria' => $this->bobot_kriteria,
-            'atribut' => $this->atribut ? 'Benefit' : 'Cost',
+            'atribut' => $this->atribut == 'true' ? 'Benefit' : 'Cost',
             'code' => $this->code,
-            'subKriteria' => $subKriteria
+            'subKriteria' => $subKriteria,
+            'list' => $this->list
         ];
     }
 }

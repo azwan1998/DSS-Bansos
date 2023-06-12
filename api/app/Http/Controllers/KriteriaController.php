@@ -23,7 +23,7 @@ class KriteriaController extends Controller
     public function index(Request $request)
     {
         if($request->list){
-            $kriteria = Kriteria::where('list' , true)->where('isDeleted', false)->get();
+            $kriteria = Kriteria::where('isDeleted', false)->get();
         }else if($request->Searching){
             $kriteria = Kriteria::where('isDeleted', false)
                     ->where('nama_kriteria','LIKE','%'.$request->Searching.'%')
@@ -36,22 +36,6 @@ class KriteriaController extends Controller
         return response(KriteriaResource::collection($kriteria));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -86,9 +70,8 @@ class KriteriaController extends Controller
     {
         $kriteria = Kriteria::find($id);
         
-        return response()->json([
-            'data' => $kriteria
-        ]); 
+        return response(new KriteriaResource($kriteria));
+
     }
 
     /**

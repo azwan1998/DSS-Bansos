@@ -31,10 +31,12 @@ class KepalaKelController extends Controller
                 ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
                 ->where('kepala_keluargas.nama','LIKE','%'.$request->Searching.'%')
                 ->orWhere('daerahs.nama_daerah','LIKE','%'.$request->Searching.'%')
+                ->orderBy('kepala_keluargas.id', 'DESC')
                 ->get();
         }else{
             $kepala = KepalaKeluarga::select('kepala_keluargas.*','daerahs.nama_daerah')
                 ->join('Daerahs','daerahs.id','=','kepala_keluargas.id_daerahs')
+                ->orderBy('kepala_keluargas.id', 'DESC')
                 ->paginate(10);
         }
         
@@ -134,6 +136,24 @@ class KepalaKelController extends Controller
         return response()->json([
             'data' => $kepala
         ]);
+    }
+
+    public function storeUpdate(Request $request, $id)
+    {
+        // dd($request->bobot);
+        // $id = $id + 1;
+        $kepala = KepalaKeluarga::findorNew($id);
+        $kepala->bobot = json_encode($request->input('bobot'));
+        $kepala->save();
+        
+        return response()->json(201);
+    }
+
+    public function getId()
+    {
+        $kepala = KepalaKeluarga::select('id')->orderBy('id', 'DESC')->first();
+
+        return response()->json($kepala);
     }
 
     /**

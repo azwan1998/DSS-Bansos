@@ -27,10 +27,7 @@ function Kriteria() {
   const [bobot1, setBobot1] = useState("");
   const [atribut1, setAtribut1] = useState("");
   //show
-  const [code2, setCode2] = useState("");
-  const [nama2, setNama2] = useState("");
-  const [bobot2, setBobot2] = useState("");
-  const [atribut2, setAtribut2] = useState("");
+  const [detail, setDetail] = useState([]);
 
   const [validation, setValidation] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -130,7 +127,6 @@ function Kriteria() {
       cancelButtonText: "Tidak",
     }).then((result) => {
       if (result.isConfirmed) {
-
         axios
           .post(`http://127.0.0.1:8000/api/kriteria/delete/${id}`)
           .then((response) => {
@@ -167,12 +163,9 @@ function Kriteria() {
       .get(`http://127.0.0.1:8000/api/kriteria/show/${id}`)
       .then((response) => {
         //set response user to state
-        setCode2(response.data.data.code);
-        setNama2(response.data.data.nama_kriteria);
-        setBobot2(response.data.data.bobot_kriteria);
-        setAtribut2(response.data.data.atribut);
+        setDetail(response.data);
         handleShow2();
-        // console.log(response.data.data.data);
+        // console.log(response.data);
       });
   };
   const handleEdit = (idEdit) => {
@@ -257,7 +250,7 @@ function Kriteria() {
           .then((response) => {
             //set response user to state
             setKriteria(response.data);
-            console.log(response.data);
+            // console.log(response.data);
           });
       } catch (error) {
         console.error("Error:", error);
@@ -318,6 +311,59 @@ function Kriteria() {
 
                 <br />
                 <br />
+                {/* MODAL SHOW DATA */}
+                <>
+                  <Modal show={show2} onHide={handleClose2}>
+                    <Modal.Header closeButton>
+                      <Modal.Title>Show Data Kriteria</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <Form>
+                        <Form.Group
+                          className="mb-3"
+                          controlId="exampleForm.ControlInput1"
+                        >
+                          <Form.Label>Code</Form.Label>
+                          <Form.Control 
+                          disabled 
+                          value={detail.code} />
+                        </Form.Group>
+                        <Form.Group
+                          className="mb-3"
+                          controlId="exampleForm.ControlInput1"
+                        >
+                          <Form.Label>Nama Kriteria</Form.Label>
+                          <Form.Control 
+                          disabled 
+                          value={detail.nama} />
+                        </Form.Group>
+                        <Form.Group
+                          className="mb-3"
+                          controlId="exampleForm.ControlInput1"
+                        >
+                          <Form.Label>Bobot Kriteria</Form.Label>
+                          <Form.Control 
+                          disabled 
+                          value={detail.bobot_kriteria} />
+                        </Form.Group>
+                        <Form.Group
+                          className="mb-3"
+                          controlId="exampleForm.ControlInput1"
+                        >
+                          <Form.Label>Atribut</Form.Label>
+                          <Form.Control 
+                          disabled 
+                          value={detail.atribut} />
+                        </Form.Group>
+                      </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <Button variant="secondary" onClick={handleClose2}>
+                        Close
+                      </Button>
+                    </Modal.Footer>
+                  </Modal>
+                </>
 
                 <Modal show={show} onHide={handleClose}>
                   <Modal.Header closeButton>
@@ -487,54 +533,6 @@ function Kriteria() {
                         >
                           <DeleteOutline />
                         </Button>
-                        {/* MODAL SHOW DATA */}
-                        <>
-                          <Modal show={show2} onHide={handleClose2}>
-                            <Modal.Header closeButton>
-                              <Modal.Title>Show Data Kriteria</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                              <Form>
-                                <Form.Group
-                                  className="mb-3"
-                                  controlId="exampleForm.ControlInput1"
-                                >
-                                  <Form.Label>Code</Form.Label>
-                                  <Form.Control disabled value={code2} />
-                                </Form.Group>
-                                <Form.Group
-                                  className="mb-3"
-                                  controlId="exampleForm.ControlInput1"
-                                >
-                                  <Form.Label>Nama Kriteria</Form.Label>
-                                  <Form.Control disabled value={nama2} />
-                                </Form.Group>
-                                <Form.Group
-                                  className="mb-3"
-                                  controlId="exampleForm.ControlInput1"
-                                >
-                                  <Form.Label>Bobot Kriteria</Form.Label>
-                                  <Form.Control disabled value={bobot2} />
-                                </Form.Group>
-                                <Form.Group
-                                  className="mb-3"
-                                  controlId="exampleForm.ControlInput1"
-                                >
-                                  <Form.Label>Atribut</Form.Label>
-                                  <Form.Control disabled value={atribut2} />
-                                </Form.Group>
-                              </Form>
-                            </Modal.Body>
-                            <Modal.Footer>
-                              <Button
-                                variant="secondary"
-                                onClick={handleClose2}
-                              >
-                                Close
-                              </Button>
-                            </Modal.Footer>
-                          </Modal>
-                        </>
                       </td>
                     </tr>
                   ))}

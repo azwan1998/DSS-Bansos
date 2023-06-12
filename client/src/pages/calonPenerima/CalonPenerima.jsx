@@ -17,9 +17,7 @@ function CalonPenerima() {
   const [id_daerahs, setId_daerah] = useState();
   const history = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [detail, setDetail] = useState();
-
-
+  const [detail, setDetail] = useState([]);
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -60,7 +58,7 @@ function CalonPenerima() {
       .then((response) => {
         setDetail(response.data.data);
         handleShow2();
-        // console.log(response.data.data);
+        console.log(response.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -110,7 +108,6 @@ function CalonPenerima() {
     // fetchData();
 
     getDaerah();
-
 
     const Searching = async () => {
       try {
@@ -173,8 +170,7 @@ function CalonPenerima() {
               {/* modal input data */}
               <Row>
                 <Col>
-                <Search handleSearch={handleSearch} />
-
+                  <Search handleSearch={handleSearch} />
                 </Col>
                 <Col></Col>
                 <Col md="end">
@@ -186,6 +182,82 @@ function CalonPenerima() {
                   </Button>
                 </Col>
               </Row>
+              <>
+                <Modal show={show2} onHide={handleClose2}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Show Detail calon penerima</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <Form>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Nama</Form.Label>
+                        <Form.Control 
+                        disabled 
+                        value={detail.nama} 
+                        />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>NIK</Form.Label>
+                        <Form.Control 
+                        disabled 
+                        value={detail.NIK} 
+                        />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Daerah</Form.Label>
+                        <Form.Control 
+                        disabled 
+                        value={detail.nama_daerah} 
+                        />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Alamat</Form.Label>
+                        <Form.Control 
+                        disabled 
+                        value={detail.alamat} 
+                        />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Nilai</Form.Label>
+                        <Form.Control 
+                        disabled 
+                        value={detail.nilai} 
+                        />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Jenis Kelamin</Form.Label>
+                        <Form.Control 
+                        disabled 
+                        value={detail.jenis_kelamin} 
+                        />
+                      </Form.Group>
+                    </Form>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose2}>
+                      Close
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+              </>
               <br />
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
@@ -206,7 +278,7 @@ function CalonPenerima() {
                   ) : (
                     CalonPenerima.map((test, index) => (
                       <tr key={test.id}>
-                        <td>{index+1}</td>
+                        <td>{index + 1}</td>
                         <td>{test.nama}</td>
                         <td>{test.NIK}</td>
                         <td>{test.kecamatan}</td>
@@ -241,7 +313,9 @@ function CalonPenerima() {
                         size="lg"
                         onChange={(e) => setId_daerah(e.target.value)}
                       >
-                        <option>Silahkan Pilih Daerah Yang Ingin di Proses</option>
+                        <option>
+                          Silahkan Pilih Daerah Yang Ingin di Proses
+                        </option>
                         <option value={"null"}>Semua Daerah</option>
                         {daerah.map((gg) => (
                           <option value={gg.id}>{gg.nama_daerah}</option>
@@ -259,82 +333,6 @@ function CalonPenerima() {
                   </Button>
                 </Modal.Footer>
               </Modal>
-              {/* <>
-                <Modal show={show2} onHide={handleClose2}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Show Detail calon penerima</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Form>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Nama</Form.Label>
-                        <Form.Control
-                          disabled
-                          // value={detail.nama}
-                        />
-                      </Form.Group>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>NIK</Form.Label>
-                        <Form.Control
-                          disabled
-                          value={detail.NIK}
-                        />
-                      </Form.Group>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Daerah</Form.Label>
-                        <Form.Control
-                          disabled
-                          value={detail.nama_daerah}
-                        />
-                      </Form.Group>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Alamat</Form.Label>
-                        <Form.Control
-                          disabled
-                          value={detail.alamat}
-                        />
-                      </Form.Group>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Nilai</Form.Label>
-                        <Form.Control
-                          disabled
-                          value={detail.nilai}
-                        />
-                      </Form.Group>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlInput1"
-                      >
-                        <Form.Label>Jenis Kelamin</Form.Label>
-                        <Form.Control
-                          disabled
-                          value={detail.jenis_kelamin}
-                        />
-                      </Form.Group>
-                    </Form>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose2}>
-                      Close
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
-              </> */}
             </div>
           </div>
         </section>

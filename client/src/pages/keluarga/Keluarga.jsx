@@ -9,6 +9,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import fileDownload from "js-file-download";
 import Search from "../../components/searching/Searching";
+// import Loading from "../../components/loading/Loading";
 
 function Keluarga({ index, item }) {
   //
@@ -17,6 +18,7 @@ function Keluarga({ index, item }) {
   const [kriteria, setKriteria] = useState([]);
   const history = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  // const [loading, setLoading] = useState(false);
 
   const [nama, setNama] = useState("");
   const [NIK, setNIK] = useState("");
@@ -24,7 +26,8 @@ function Keluarga({ index, item }) {
   const [jenis_kelamin, setJenis_kelamin] = useState("");
   const [alamat, setAlamat] = useState("");
   const [id_daerahs, setId_daerah] = useState("");
-  const [bobot, setBobot] = useState([]);
+  // const [bobot, setBobot] = useState([]);
+  const [formData, setFormData] = useState([]);
 
   //
   const [show, setShow] = useState(false);
@@ -37,11 +40,19 @@ function Keluarga({ index, item }) {
 
   //token
   const token = localStorage.getItem("token");
+  const [payload, setPayload] = useState([]);
+
+  // const [perId, setPerId] = useState("");
+
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
+    
+
+    
 
     formData.append("nama", nama);
     formData.append("NIK", NIK);
@@ -49,14 +60,15 @@ function Keluarga({ index, item }) {
     formData.append("jenis_kelamin", jenis_kelamin);
     formData.append("id_daerahs", id_daerahs);
     formData.append("alamat", alamat);
-    formData.append("bobot", bobot);
 
     await axios
       .post("http://127.0.0.1:8000/api/kepala/store", formData)
       .then((response) => {
-        setShow(false);
+        // console.log(response.data)
 
-        fetchData();
+        // fetchData();
+        // getId();
+        handlePerfect(response.data.id);
 
         // console.log(bobot);
       });
@@ -65,6 +77,63 @@ function Keluarga({ index, item }) {
     //   setValidation(error.response.data.errors);
     //   // console.log(error.response.data);
     // });
+  };
+
+  // const getId = () => {
+  //   axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  //   axios.get("http://127.0.0.1:8000/api/kepala/getId").then((response) => {
+  //     setPerId(response.data.id);
+
+      
+  //   });
+  // };
+
+  const handleChange = (e, index) => {
+    const updatedData = [...formData];
+    updatedData[index] = {
+      ...updatedData[index],
+      value: e.target.value,
+    };
+    setFormData(updatedData);
+  };
+
+  const handlePerfect = async (perId) => {
+
+    // await getId();
+    console.log(perId);
+    // Mengirim data ke API menggunakan metode POST
+    const data = formData.map((data) => data.value);
+    setPayload(data);
+
+    
+    // console.log(data);
+
+    const transformedPayload = {
+      "bobot": payload
+    };
+
+    // console.log(transformedPayload);
+    // const entah = perId + 1;
+
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    axios
+      .post(`http://127.0.0.1:8000/api/kepala/storeUpdate/${perId}`, transformedPayload,{
+        headers: {
+          'Content-Type': 'application/json',
+          // Tambahkan header lain jika diperlukan
+        }
+      })
+      .then((response) => {
+        // setPerId(null);
+        console.log(response.data); // Output dari API
+      })
+      .catch((error) => {
+        // setPerId(null);
+        console.error("Error:", error);
+      });
+      
+    // setPayload(null);
+    fetchData();
   };
   const fetchData = async () => {
     //set axios header dengan type Authorization + Bearer token
@@ -160,7 +229,6 @@ function Keluarga({ index, item }) {
     // fetchData();
 
     //call datadaerah
-    
   }, [searchTerm]);
 
   const handleSearch = (searchTerm) => {
@@ -223,7 +291,7 @@ function Keluarga({ index, item }) {
                 <tbody>
                   {keluarga.map((test, index) => (
                     <tr key={index}>
-                      <td>{index+1}</td>
+                      <td>{index + 1}</td>
                       <td>{test.nama}</td>
                       <td>{test.NIK}</td>
                       <td>{test.daerah}</td>
@@ -234,7 +302,7 @@ function Keluarga({ index, item }) {
                         <Button variant="outline-info">
                           <InfoOutlined />
                         </Button>{" "}
-                        <Button 
+                        <Button
                           variant="outline-danger"
                           onClick={() => handleDelete(test.id)}
                         >
@@ -259,12 +327,11 @@ function Keluarga({ index, item }) {
                       <Form.Control
                         size="sm"
                         type="text"
-                        placeholder="kurnial"
+                        placeholder="masukkan nama"
                         autoFocus
                         onChange={(e) => setNama(e.target.value)}
                       />
                     </Form.Group>
-
                     <Form.Group
                       className="mb-3"
                       controlId="exampleForm.ControlInput1"
@@ -272,8 +339,8 @@ function Keluarga({ index, item }) {
                       <Form.Label>NIK</Form.Label>
                       <Form.Control
                         size="sm"
-                        type="text"
-                        placeholder="017284278428"
+                        type="number"
+                        placeholder="masukkan NIK"
                         autoFocus
                         onChange={(e) => setNIK(e.target.value)}
                       />
@@ -286,12 +353,11 @@ function Keluarga({ index, item }) {
                       <Form.Control
                         size="sm"
                         type="date"
-                        placeholder="10-10-2000"
+                        placeholder="masukkan tanggal lahir"
                         autoFocus
                         onChange={(e) => setTanggal_lahir(e.target.value)}
                       />
                     </Form.Group>
-
                     <Form.Group
                       className="mb-3"
                       controlId="exampleForm.ControlInput1"
@@ -313,7 +379,6 @@ function Keluarga({ index, item }) {
                         <option value="Perempuan">Perempuan</option>
                       </Form.Select>
                     </Form.Group>
-
                     <Form.Group
                       className="mb-3"
                       controlId="exampleForm.ControlInput1"
@@ -334,7 +399,6 @@ function Keluarga({ index, item }) {
                         ))}
                       </Form.Select>
                     </Form.Group>
-
                     <Form.Group
                       className="mb-3"
                       controlId="exampleForm.ControlTextarea1"
@@ -346,59 +410,38 @@ function Keluarga({ index, item }) {
                         onChange={(e) => setAlamat(e.target.value)}
                       />
                     </Form.Group>
-
-                    <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlInput1"
-                    >
-                      <Form.Label>Jumlah ART</Form.Label>
-                      <Form.Control
-                        size="sm"
-                        type="text"
-                        placeholder="5"
-                        autoFocus
-                        onChange={(e) => setBobot(e.target.value)}
-                        // onChange={handleChange}
-                      />
-                    </Form.Group>
-
-                    <Form.Group
-                      className="mb-3"
-                      controlId="exampleForm.ControlInput1"
-                    >
-                      <Form.Label>luas Lantai</Form.Label>
-                      <Form.Control
-                        size="sm"
-                        type="text"
-                        placeholder="70"
-                        autoFocus
-                        onChange={(e) => setBobot(e.target.value)}
-                        // onChange={handleChange}
-                      />
-                    </Form.Group>
-
-                    {kriteria.map((kk, index) => (
+                    {kriteria.map((data, index) => (
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                         key={index}
                       >
-                        <Form.Label>{kk.nama}</Form.Label>
-                        <br />
-                        <Form.Select
-                          aria-label="Default select example"
-                          size="lg"
-                          onChange={(e) => setBobot(e.target.value)}
-                          // onChange={handleChange}
-                        >
-                          <option>
-                            - - - - - - - - - - - - - - - SILAHKAN PILIH - - - -
-                            - - - - - - - - - - -
-                          </option>
-                          {kk.subKriteria.map((jj) => (
-                            <option value={jj.nilai}>{jj.nama}</option>
-                          ))}
-                        </Form.Select>
+                        <Form.Label>{data.nama}</Form.Label>
+                        {data.list === "0" ? (
+                          <Form.Control
+                            size="sm"
+                            type="text"
+                            placeholder="masukkan nilai"
+                            autoFocus
+                            onChange={(e) => handleChange(e, index)}
+                            // onChange={handleChange}
+                          />
+                        ) : (
+                          <Form.Select
+                            aria-label="Default select example"
+                            size="lg"
+                            onChange={(e) => handleChange(e, index)}
+                            // onChange={handleChange}
+                          >
+                            <option>
+                              - - - - - - - - - - - - - - - SILAHKAN PILIH - - -
+                              - - - - - - - - - - - -
+                            </option>
+                            {data.subKriteria.map((jj) => (
+                              <option value={jj.nilai}>{jj.nama}</option>
+                            ))}
+                          </Form.Select>
+                        )}
                       </Form.Group>
                     ))}
                   </Form>
