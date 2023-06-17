@@ -12,6 +12,7 @@ use App\Http\Resources\Keluarga as KeluargaResource;
 use App\Exports\CalonPenerimaExport;
 use App\Exports\KepalaKelExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Validator;
 
 class KepalaKelController extends Controller
 {
@@ -52,13 +53,18 @@ class KepalaKelController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'nama' => 'required',
             'id_daerahs' => 'required',
             'NIK' => 'required',
             'tanggal_lahir' => 'required',
             'jenis_kelamin' => 'required',
+            'bobot' => 'required'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(),422);
+        }
 
         $kepala = New KepalaKeluarga;
         $kepala->nama = $request->nama;

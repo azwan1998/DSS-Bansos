@@ -22,10 +22,12 @@ function Kriteria() {
   const [nama, setNama] = useState("");
   const [bobot, setBobot] = useState("");
   const [atribut, setAtribut] = useState("");
+  const [type, setType] = useState("");
   //edit
   const [nama1, setNama1] = useState("");
   const [bobot1, setBobot1] = useState("");
   const [atribut1, setAtribut1] = useState("");
+  const [type1, setType1] = useState("");
   //show
   const [detail, setDetail] = useState([]);
 
@@ -58,6 +60,7 @@ function Kriteria() {
         formData.append("nama_kriteria", nama);
         formData.append("bobot_kriteria", bobot);
         formData.append("atribut", atribut);
+        formData.append("type", type);
 
         axios
           .post("http://127.0.0.1:8000/api/kriteria/store", formData)
@@ -74,7 +77,7 @@ function Kriteria() {
             }
           })
           .catch((error) => {
-            console.error(error);
+            // console.error(error);
             // Logout gagal karena terjadi kesalahan
             Swal.fire(
               "Gagal",
@@ -87,33 +90,22 @@ function Kriteria() {
         Swal.fire("Batal", "Input data dibatalkan.", "info");
       }
     });
-
-    // await axios
-    //   .post("http://127.0.0.1:8000/api/kriteria/store", formData)
-    //   .then((response) => {
-    //     setShow(false);
-    //     //redirect to dashboard
-    //     fetchData();
-    //   })
-    //   .catch((error) => {
-    //     //assign error to state "validation"
-    //     setValidation(error.response.data.errors);
-    //     // console.log(error.response.data);
-    //   });
   };
 
   const ShowKriteria = (id) => {
+    console.log(id);
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     axios
       .get(`http://127.0.0.1:8000/api/kriteria/show/${id}`)
       .then((response) => {
         //set response user to state
-        setNama1(response.data.data.nama_kriteria);
-        setBobot1(response.data.data.bobot_kriteria);
-        setAtribut1(response.data.data.atribut);
+        // console.log(response.data.nama);
+        setNama1(response.data.nama);
+        setBobot1(response.data.bobot_kriteria);
+        setAtribut1(response.data.atribut);
         handleShow1();
         setIdEdit(id);
-        // console.log(response.data.data.data);
+        
       });
   };
 
@@ -143,7 +135,7 @@ function Kriteria() {
             }
           })
           .catch((error) => {
-            console.error(error);
+            // console.error(error);
             // Logout gagal karena terjadi kesalahan
             Swal.fire(
               "Gagal",
@@ -187,6 +179,7 @@ function Kriteria() {
         formData.append("nama_kriteria", nama1);
         formData.append("bobot_kriteria", bobot1);
         formData.append("atribut", atribut1);
+        formData.append("type", type1);
 
         axios
           .post(`http://127.0.0.1:8000/api/kriteria/update/${idEdit}`, formData)
@@ -204,7 +197,7 @@ function Kriteria() {
             }
           })
           .catch((error) => {
-            console.error(error);
+            // console.error(error);
             // Logout gagal karena terjadi kesalahan
             Swal.fire(
               "Gagal",
@@ -414,6 +407,23 @@ function Kriteria() {
                           <option value="false">COST</option>
                         </Form.Select>
                       </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Jenis Subkriteria</Form.Label>
+                        <br />
+                        <Form.Select
+                          aria-label="Default select example"
+                          size="lg"
+                          // value={atribut}
+                          onChange={(e) => setType(e.target.value)}
+                        >
+                          <option>Select Jenis SubKriteria</option>
+                          <option value="true">SubKriteria</option>
+                          <option value="false">Non SubKriteria</option>
+                        </Form.Select>
+                      </Form.Group>
                     </Form>
                   </Modal.Body>
                   <Modal.Footer>
@@ -479,6 +489,23 @@ function Kriteria() {
                           <option value="false">COST</option>
                         </Form.Select>
                       </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="exampleForm.ControlInput1"
+                      >
+                        <Form.Label>Jenis Subkriteria</Form.Label>
+                        <br />
+                        <Form.Select
+                          aria-label="Default select example"
+                          size="lg"
+                          // value={atribut}
+                          onChange={(e) => setType1(e.target.value)}
+                        >
+                          <option>Select Jenis SubKriteria</option>
+                          <option value={1}>SubKriteria</option>
+                          <option value={0}>Non SubKriteria</option>
+                        </Form.Select>
+                      </Form.Group>
                     </Form>
                   </Modal.Body>
                   <Modal.Footer>
@@ -499,7 +526,7 @@ function Kriteria() {
                 <thead>
                   <tr>
                     <th>No</th>
-                    <th>Code</th>
+                    {/* <th>Code</th> */}
                     <th>Nama Kriteria</th>
                     <th>Bobot</th>
                     <th>Atribut</th>
@@ -510,7 +537,7 @@ function Kriteria() {
                   {kriteria.map((test, index) => (
                     <tr key={test.id}>
                       <td>{index + 1}</td>
-                      <td>{test.code}</td>
+                      {/* <td>{test.code}</td> */}
                       <td>{test.nama}</td>
                       <td>{test.bobot_kriteria}</td>
                       <td>{test.atribut}</td>

@@ -9,6 +9,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import fileDownload from "js-file-download";
 import Search from "../../components/searching/Searching";
+import Swal from "sweetalert2";
 // import Loading from "../../components/loading/Loading";
 
 function Keluarga({ index, item }) {
@@ -28,6 +29,7 @@ function Keluarga({ index, item }) {
   const [id_daerahs, setId_daerah] = useState("");
   // const [bobot, setBobot] = useState([]);
   const [formData, setFormData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   //
   const [show, setShow] = useState(false);
@@ -44,15 +46,10 @@ function Keluarga({ index, item }) {
 
   // const [perId, setPerId] = useState("");
 
-  
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     const formData = new FormData();
-    
-
-    
 
     formData.append("nama", nama);
     formData.append("NIK", NIK);
@@ -61,7 +58,8 @@ function Keluarga({ index, item }) {
     formData.append("id_daerahs", id_daerahs);
     formData.append("alamat", alamat);
 
-    await axios
+    try {
+      axios
       .post("http://127.0.0.1:8000/api/kepala/store", formData)
       .then((response) => {
         // console.log(response.data)
@@ -72,21 +70,10 @@ function Keluarga({ index, item }) {
 
         // console.log(bobot);
       });
-    // .catch((error) => {
-    //   //assign error to state "validation"
-    //   setValidation(error.response.data.errors);
-    //   // console.log(error.response.data);
-    // });
+    } catch (error) {
+      console.log("error" , error)
+    }
   };
-
-  // const getId = () => {
-  //   axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  //   axios.get("http://127.0.0.1:8000/api/kepala/getId").then((response) => {
-  //     setPerId(response.data.id);
-
-      
-  //   });
-  // };
 
   const handleChange = (e, index) => {
     const updatedData = [...formData];
@@ -97,19 +84,17 @@ function Keluarga({ index, item }) {
     setFormData(updatedData);
   };
 
-  const handlePerfect = async (perId) => {
-
+  const handlePerfect = (perId) => {
     // await getId();
     console.log(perId);
     // Mengirim data ke API menggunakan metode POST
     const data = formData.map((data) => data.value);
     setPayload(data);
 
-    
     // console.log(data);
 
     const transformedPayload = {
-      "bobot": payload
+      bobot: payload,
     };
 
     // console.log(transformedPayload);
@@ -117,12 +102,16 @@ function Keluarga({ index, item }) {
 
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     axios
-      .post(`http://127.0.0.1:8000/api/kepala/storeUpdate/${perId}`, transformedPayload,{
-        headers: {
-          'Content-Type': 'application/json',
-          // Tambahkan header lain jika diperlukan
+      .post(
+        `http://127.0.0.1:8000/api/kepala/storeUpdate/${perId}`,
+        transformedPayload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            // Tambahkan header lain jika diperlukan
+          },
         }
-      })
+      )
       .then((response) => {
         // setPerId(null);
         console.log(response.data); // Output dari API
@@ -131,7 +120,7 @@ function Keluarga({ index, item }) {
         // setPerId(null);
         console.error("Error:", error);
       });
-      
+
     // setPayload(null);
     fetchData();
   };
@@ -146,18 +135,25 @@ function Keluarga({ index, item }) {
     });
   };
 
-  const handleExcel = async () => {
+  const handleExcel = () => {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     //fetch user from Rest API
-    console.log(id_daerahs);
-    await axios
+    // console.log(id_daerahs);
+    handleClose1();
+    setLoading(true);
+    axios
       .get(`http://127.0.0.1:8000/api/kepala/excel?id_daerahs=${id_daerahs}`, {
         responseType: "blob",
       })
       .then((response) => {
         //set response user to state
         // setCalonPenerima(response.data);
-        fileDownload(response.data, "KepalaKeluarga.xlsx");
+        setTimeout(() => {
+          setLoading(false);
+          // Lakukan tindakan setelah login berhasil
+          fileDownload(response.data, "KepalaKeluarga.xlsx");
+        }, 3000);
+        
         // console.log(response.data.data);
       }, []);
   };
@@ -185,15 +181,44 @@ function Keluarga({ index, item }) {
   };
 
   const handleDelete = (id) => {
-    axios
-      .post(`http://127.0.0.1:8000/api/kepala/delete/${id}`)
-      .then(() => {
-        setKeluarga(keluarga.filter((row) => row.id !== id));
-        fetchData();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    Swal.fire({
+      title: "Konfirmasi Form",
+      text: "Apakah Anda Yakin Menghapus data ini?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Iya",
+      cancelButtonText: "Tidak",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .post(`http://127.0.0.1:8000/api/kepala/delete/${id}`)
+          .then((response) => {
+            if ((response, 201)) {
+              setKeluarga(keluarga.filter((row) => row.id !== id));
+              fetchData();
+            } else {
+              // Logout gagal
+              Swal.fire(
+                "Gagal",
+                "Terjadi kesalahan saat menghapus data.",
+                "error"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            // Logout gagal karena terjadi kesalahan
+            Swal.fire(
+              "Gagal",
+              "Terjadi kesalahan saat saat menghapus data.",
+              "error"
+            );
+          });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Batal logout
+        Swal.fire("Batal", "Hapus data dibatalkan.", "info");
+      }
+    });
   };
   // console.log(keluarga);
   useEffect(() => {
@@ -272,8 +297,8 @@ function Keluarga({ index, item }) {
                   <Button variant="primary" onClick={handleShow}>
                     Input Data Keluarga
                   </Button>{" "}
-                  <Button variant="secondary" onClick={handleShow1}>
-                    Export Excel
+                  <Button variant="secondary" onClick={handleShow1} disabled={loading}>
+                    {loading ? "Loading. . . ." : "Export Excel"}
                   </Button>
                 </Col>
               </Row>
@@ -461,7 +486,7 @@ function Keluarga({ index, item }) {
               </Modal>
               <Modal show={show1} onHide={handleClose1}>
                 <Modal.Header closeButton>
-                  <Modal.Title>Filter Proses Data Keluarga</Modal.Title>
+                  <Modal.Title>Filter Export Data Keluarga</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                   <Form onSubmit={handleClose1}>
@@ -476,7 +501,8 @@ function Keluarga({ index, item }) {
                         size="lg"
                         onChange={(e) => setId_daerah(e.target.value)}
                       >
-                        <option value={"null"}>Semua Daerah</option>
+                        <option >Silahkan pilih daerah</option>
+                        <option value="null">Semua Daerah</option>
                         {daerah.map((gg) => (
                           <option value={gg.id}>{gg.nama_daerah}</option>
                         ))}

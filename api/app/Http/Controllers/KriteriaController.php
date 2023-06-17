@@ -23,7 +23,7 @@ class KriteriaController extends Controller
     public function index(Request $request)
     {
         if($request->list){
-            $kriteria = Kriteria::where('isDeleted', false)->get();
+            $kriteria = Kriteria::where('isDeleted', false)->where('list', true)->get();
         }else if($request->Searching){
             $kriteria = Kriteria::where('isDeleted', false)
                     ->where('nama_kriteria','LIKE','%'.$request->Searching.'%')
@@ -42,7 +42,8 @@ class KriteriaController extends Controller
             // 'code' => 'required',
             'nama_kriteria' => 'required',
             'bobot_kriteria' => 'required',
-            'atribut' => 'required'
+            'atribut' => 'required',
+            'type' => 'required'
         ]);
         $getCode = Kriteria::all();
 
@@ -53,6 +54,7 @@ class KriteriaController extends Controller
         $kriteria->nama_kriteria = $request->nama_kriteria;
         $kriteria->bobot_kriteria = $request->bobot_kriteria;
         $kriteria->atribut = $request->atribut;
+        $kriteria->list = $request->type;
         $kriteria->save();
 
         return response()->json([
@@ -101,6 +103,7 @@ class KriteriaController extends Controller
         $kriteria->nama_kriteria = $request->nama_kriteria;
         $kriteria->bobot_kriteria = $request->bobot_kriteria;
         $kriteria->atribut = $request->atribut;
+        $kriteria->list = $request->type;
         $kriteria->save();
 
         return response()->json([

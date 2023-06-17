@@ -10,6 +10,7 @@ import Col from "react-bootstrap/Col";
 import fileDownload from "js-file-download";
 import Loading from "../../components/loading/Loading";
 import Search from "../../components/searching/Searching";
+import Swal from "sweetalert2";
 
 function CalonPenerima() {
   const [CalonPenerima, setCalonPenerima] = useState([]);
@@ -26,6 +27,7 @@ function CalonPenerima() {
   const handleClose2 = () => setShow2(false);
   const handleShow2 = () => setShow2(true);
   const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
 
   //token
   const token = localStorage.getItem("token");
@@ -69,31 +71,49 @@ function CalonPenerima() {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     //fetch user from Rest API
     console.log(id_daerahs);
-    await axios
-      .post(`http://127.0.0.1:8000/api/penerima/store?id_daerahs=${id_daerahs}`)
-      .then((response) => {
-        //set response user to state
-        // setCalonPenerima(response.data);
-        handleClose();
-        setLoading(true);
-        setTimeout(() => {
-          setLoading(false);
-          // Lakukan tindakan setelah login berhasil
-          fetchData();
-        }, 3000);
-        // console.log(response.data.data);
-      }, []);
+    try {
+      const response = await axios.post(
+        `http://127.0.0.1:8000/api/penerima/store?id_daerahs=${id_daerahs}`
+      );
+      // set response user to state
+      // setCalonPenerima(response.data);
+      handleClose();
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        // Lakukan tindakan setelah login berhasil
+        fetchData();
+      }, 3000);
+      // console.log(response.data.data);
+    } catch (err) {
+      // setPerId(null);
+      handleClose();
+      Swal.fire(
+        "Data Keluarga Kurang dari 2",
+        `${err.response.data.data.message}`,
+        "info"
+      );
+      console.error("Error:", err.response.data.data.message);
+      // Tampilkan pesan error ke pengguna
+      // console.log("Gagal mendapatkan data dari API:", error.message);
+    }
   };
 
-  const Excel = async () => {
+  const Excel = () => {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     //fetch user from Rest API
-    await axios
+    setLoading1(true);
+    axios
       .get(`http://127.0.0.1:8000/api/penerima/excel`, { responseType: "blob" })
       .then((response) => {
         //set response user to state
         // setCalonPenerima(response.data);
-        fileDownload(response.data, "calonPenerima.xlsx");
+        
+        setTimeout(() => {
+          setLoading1(false);
+          // Lakukan tindakan setelah login berhasil
+          fileDownload(response.data, "calonPenerima.xlsx");
+        }, 3000);
         // console.log(response.data.data);
       }, []);
   };
@@ -177,8 +197,12 @@ function CalonPenerima() {
                   <Button variant="primary" onClick={handleShow}>
                     Silahkan Proses Data
                   </Button>{" "}
-                  <Button variant="secondary" onClick={Excel}>
-                    Silahkan Export Excel
+                  <Button
+                    variant="secondary"
+                    onClick={Excel}
+                    disabled={loading1}
+                  >
+                    {loading1 ? "Loading. . . ." : "Silahkan Export Excel"}
                   </Button>
                 </Col>
               </Row>
@@ -194,60 +218,42 @@ function CalonPenerima() {
                         controlId="exampleForm.ControlInput1"
                       >
                         <Form.Label>Nama</Form.Label>
-                        <Form.Control 
-                        disabled 
-                        value={detail.nama} 
-                        />
+                        <Form.Control disabled value={detail.nama} />
                       </Form.Group>
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
                         <Form.Label>NIK</Form.Label>
-                        <Form.Control 
-                        disabled 
-                        value={detail.NIK} 
-                        />
+                        <Form.Control disabled value={detail.NIK} />
                       </Form.Group>
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
                         <Form.Label>Daerah</Form.Label>
-                        <Form.Control 
-                        disabled 
-                        value={detail.nama_daerah} 
-                        />
+                        <Form.Control disabled value={detail.nama_daerah} />
                       </Form.Group>
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
                         <Form.Label>Alamat</Form.Label>
-                        <Form.Control 
-                        disabled 
-                        value={detail.alamat} 
-                        />
+                        <Form.Control disabled value={detail.alamat} />
                       </Form.Group>
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
                         <Form.Label>Nilai</Form.Label>
-                        <Form.Control 
-                        disabled 
-                        value={detail.nilai} 
-                        />
+                        <Form.Control disabled value={detail.nilai} />
                       </Form.Group>
                       <Form.Group
                         className="mb-3"
                         controlId="exampleForm.ControlInput1"
                       >
                         <Form.Label>Jenis Kelamin</Form.Label>
-                        <Form.Control 
-                        disabled 
-                        value={detail.jenis_kelamin} 
-                        />
+                        <Form.Control disabled value={detail.jenis_kelamin} />
                       </Form.Group>
                     </Form>
                   </Modal.Body>

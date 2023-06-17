@@ -78,13 +78,27 @@ class CalonPenerimaController extends Controller
     public function store(Request $request)
     {
         if($request->id_daerahs == 'null'){
-            $mainData = KepalaKeluarga::select('id','bobot')->orderBy('id' , 'ASC')->get();
+            $mainData = KepalaKeluarga::select('id','nama','bobot')->orderBy('id' , 'ASC')->get();
+            
         }else{
-            $mainData = KepalaKeluarga::select('kepala_keluargas.id','kepala_keluargas.bobot')
+            $mainData = KepalaKeluarga::select('kepala_keluargas.id','kepala_keluargas.nama','kepala_keluargas.bobot')
                     ->join('Daerahs','daerahs.id', '=' , 'kepala_keluargas.id_daerahs')
                     ->where('daerahs.id', $request->id_daerahs)
                     ->orderBy('id', 'ASC')
                     ->get();
+        }
+        $cekData = count($mainData);
+        if ($cekData <= 1){
+            $response = [
+                'message' => 'Error validation',
+                'data' => [
+                    'message' => [
+                        'Silahkan menambah data keluarga pada kecamatan tersebut untuk melanjutkan proses'
+                    ]
+                ]
+            ];
+
+            return response()->json($response, 422);
         }
         
         $bobot = Kriteria::select('bobot_kriteria','atribut')->get();
