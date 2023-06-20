@@ -28,8 +28,9 @@ function Keluarga({ index, item }) {
   const [alamat, setAlamat] = useState("");
   const [id_daerahs, setId_daerah] = useState("");
   // const [bobot, setBobot] = useState([]);
-  const [formData, setFormData] = useState([]);
+  const [bobot, setBobot] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [validated, setValidated] = useState(false);
 
   //
   const [show, setShow] = useState(false);
@@ -47,83 +48,100 @@ function Keluarga({ index, item }) {
   // const [perId, setPerId] = useState("");
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    handleClose();
+    Swal.fire({
+      title: "Konfirmasi Form",
+      text: "Apakah Data yang Anda Input sudah Benar?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Iya",
+      cancelButtonText: "Tidak",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        e.preventDefault();
 
-    const formData = new FormData();
+        const data = bobot.map((data) => data.value);
+        // setPayload(data);
+        const newDataArray = data.map((item) => String(item));
 
-    formData.append("nama", nama);
-    formData.append("NIK", NIK);
-    formData.append("tanggal_lahir", tanggal_lahir);
-    formData.append("jenis_kelamin", jenis_kelamin);
-    formData.append("id_daerahs", id_daerahs);
-    formData.append("alamat", alamat);
+        console.log(newDataArray);
 
-    try {
-      axios
-      .post("http://127.0.0.1:8000/api/kepala/store", formData)
-      .then((response) => {
-        // console.log(response.data)
+        const validationErrors = validateForm();
 
-        // fetchData();
-        // getId();
-        handlePerfect(response.data.id);
+        const formData = new FormData();
 
-        // console.log(bobot);
-      });
-    } catch (error) {
-      console.log("error" , error)
+        formData.append("nama", nama);
+        formData.append("NIK", NIK);
+        formData.append("tanggal_lahir", tanggal_lahir);
+        formData.append("jenis_kelamin", jenis_kelamin);
+        formData.append("id_daerahs", id_daerahs);
+        formData.append("alamat", alamat);
+        // formData.append("bobot", newDataArray);
+        newDataArray.forEach((item, index) => {
+          formData.append(`bobot[${index}]`, item); // Menggunakan indeks untuk mengirim setiap elemen dalam array sebagai "bobot[]"
+        });
+
+        axios
+          .post("http://127.0.0.1:8000/api/kepala/store", formData)
+          .then((response) => {
+            if ((response, 201)) {
+              fetchData();
+            } else {
+              // Logout gagal
+              Swal.fire(
+                "Gagal",
+                "Terjadi kesalahan saat melakukan mengiput data.",
+                "error"
+              );
+            }
+          })
+          .catch((error) => {
+            // setValidated(validationErrors);
+            // console.log(error.response);
+            // Logout gagal karena terjadi kesalahan
+            Swal.fire(
+              "Gagal",
+              "Silahkan lengkapi form data terlebih dahulu",
+              "error"
+            );
+          });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Batal logout
+        Swal.fire("Batal", "Input data dibatalkan.", "info");
+      }
+    });
+  };
+
+  const validateForm = () => {
+    const validated = {};
+    // Validasi nama
+    if (!nama.trim()) {
+      validated.name = "Nama harus diisi";
     }
+    // // Validasi email
+    // if (!formData.email.trim()) {
+    //   errors.email = 'Email harus diisi';
+    // } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    //   errors.email = 'Format email tidak valid';
+    // }
+    // // Validasi password
+    // if (!formData.password) {
+    //   errors.password = 'Password harus diisi';
+    // } else if (formData.password.length < 6) {
+    //   errors.password = 'Password minimal 6 karakter';
+    // }
+    return validated;
   };
 
   const handleChange = (e, index) => {
-    const updatedData = [...formData];
+    const updatedData = [...bobot];
     updatedData[index] = {
       ...updatedData[index],
       value: e.target.value,
     };
-    setFormData(updatedData);
+    setBobot(updatedData);
   };
 
-  const handlePerfect = (perId) => {
-    // await getId();
-    console.log(perId);
-    // Mengirim data ke API menggunakan metode POST
-    const data = formData.map((data) => data.value);
-    setPayload(data);
-
-    // console.log(data);
-
-    const transformedPayload = {
-      bobot: payload,
-    };
-
-    // console.log(transformedPayload);
-    // const entah = perId + 1;
-
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    axios
-      .post(
-        `http://127.0.0.1:8000/api/kepala/storeUpdate/${perId}`,
-        transformedPayload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            // Tambahkan header lain jika diperlukan
-          },
-        }
-      )
-      .then((response) => {
-        // setPerId(null);
-        console.log(response.data); // Output dari API
-      })
-      .catch((error) => {
-        // setPerId(null);
-        console.error("Error:", error);
-      });
-
-    // setPayload(null);
-    fetchData();
-  };
   const fetchData = async () => {
     //set axios header dengan type Authorization + Bearer token
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -153,7 +171,7 @@ function Keluarga({ index, item }) {
           // Lakukan tindakan setelah login berhasil
           fileDownload(response.data, "KepalaKeluarga.xlsx");
         }, 3000);
-        
+
         // console.log(response.data.data);
       }, []);
   };
@@ -172,7 +190,7 @@ function Keluarga({ index, item }) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     //fetch user from Rest API
     await axios
-      .get("http://127.0.0.1:8000/api/kriteria?list=true")
+      .get("http://127.0.0.1:8000/api/kriteria/?kepala=true")
       .then((response) => {
         //set response user to state
         setKriteria(response.data);
@@ -297,7 +315,11 @@ function Keluarga({ index, item }) {
                   <Button variant="primary" onClick={handleShow}>
                     Input Data Keluarga
                   </Button>{" "}
-                  <Button variant="secondary" onClick={handleShow1} disabled={loading}>
+                  <Button
+                    variant="secondary"
+                    onClick={handleShow1}
+                    disabled={loading}
+                  >
                     {loading ? "Loading. . . ." : "Export Excel"}
                   </Button>
                 </Col>
@@ -338,7 +360,12 @@ function Keluarga({ index, item }) {
                   ))}
                 </tbody>
               </table>
-              <Modal show={show} onHide={handleClose}>
+              <Modal
+                noValidate
+                validated={validated}
+                show={show}
+                onHide={handleClose}
+              >
                 <Modal.Header closeButton>
                   <Modal.Title>Input Data Keluarga</Modal.Title>
                 </Modal.Header>
@@ -355,7 +382,11 @@ function Keluarga({ index, item }) {
                         placeholder="masukkan nama"
                         autoFocus
                         onChange={(e) => setNama(e.target.value)}
+                        isInvalid={!!validated.name}
                       />
+                      <Form.Control.Feedback type="invalid">
+                        Please choose a username.
+                      </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group
                       className="mb-3"
@@ -501,7 +532,7 @@ function Keluarga({ index, item }) {
                         size="lg"
                         onChange={(e) => setId_daerah(e.target.value)}
                       >
-                        <option >Silahkan pilih daerah</option>
+                        <option>Silahkan pilih daerah</option>
                         <option value="null">Semua Daerah</option>
                         {daerah.map((gg) => (
                           <option value={gg.id}>{gg.nama_daerah}</option>

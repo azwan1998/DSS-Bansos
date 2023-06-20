@@ -28,6 +28,8 @@ class KriteriaController extends Controller
             $kriteria = Kriteria::where('isDeleted', false)
                     ->where('nama_kriteria','LIKE','%'.$request->Searching.'%')
                     ->get();
+        }else if($request->kepala){
+            $kriteria = Kriteria::where('isDeleted', false)->orderBy('id', 'ASC')->get();
         }else{
             $kriteria = Kriteria::where('isDeleted', false)->orderBy('id', 'DESC')->paginate(10);
         }
