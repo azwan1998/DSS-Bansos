@@ -101,27 +101,16 @@ function SideBar() {
                 </a>
               </li>
               <li className="nav-item">
-                <a href="#" className="nav-link">
-                  <i className="nav-icon fas fa-light fa-list-check" />
-                  <p>
-                    Data Kriteria
-                    <i className="right fas fa-angle-left" />
-                  </p>
+                <a href="/kriteria" className="nav-link">
+                  <i className="nav-icon fas fa-th-large" />
+                  <p>Data Kriteria</p>
                 </a>
-                <ul className="nav nav-treeview">
-                  <li className="nav-item">
-                    <a href="/kriteria" className="nav-link">
-                      <i className="fas fa-light fa-check nav-icon" />
-                      <p>Kriteria</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/subkriteria" className="nav-link">
-                      <i className="fas fa-light fa-check nav-icon" />
-                      <p>Subkriteria</p>
-                    </a>
-                  </li>
-                </ul>
+              </li>
+              <li className="nav-item">
+                <a href="/subkriteria" className="nav-link">
+                  <i className="nav-icon fas fa-light fa-th" />
+                  <p>Data SubKriteria</p>
+                </a>
               </li>
               <li className="nav-item">
                 <a href="/daerah" className="nav-link">
